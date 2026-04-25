@@ -2,23 +2,39 @@
 
 import { supabase } from './supabase'
 
-export async function getPhotos() {
+// This is the "Contract" for your data
+interface Photo {
+  id: number;
+  title: string | null;
+  image_url: string;
+  taken_at: string;
+  cameras: {
+    name: string;
+  } | null; // It's an object, not an array!
+  film_stocks: {
+    name: string;
+  } | null;
+}
+
+// Update your function to use this Interface
+export async function getPhotos(): Promise<Photo[]> {
   const { data, error } = await supabase
     .from('photos')
     .select(`
       id,
       title,
       image_url,
-      date,
+      taken_at,
       cameras ( name ),
       film_stocks ( name )
     `)
-    .order('date', { ascending: false }) // Shows newest photos first
+    .order('taken_at', { ascending: false });
 
   if (error) {
-    console.error('Fetch error:', error)
-    return []
+    console.error(error);
+    return [];
   }
 
-  return data
+  // We "cast" the data to our Photo interface
+  return (data as any) as Photo[];
 }
