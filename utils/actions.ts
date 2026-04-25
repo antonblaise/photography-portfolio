@@ -7,7 +7,7 @@ interface Photo {
   id: number;
   title: string | null;
   image_url: string;
-  taken_at: string;
+  date: string;
   cameras: {
     name: string;
   } | null; // It's an object, not an array!
@@ -24,11 +24,11 @@ export async function getPhotos(): Promise<Photo[]> {
       id,
       title,
       image_url,
-      taken_at,
+      date,
       cameras ( name ),
       film_stocks ( name )
     `)
-    .order('taken_at', { ascending: false });
+    .order('date', { ascending: false });
 
   if (error) {
     console.error(error);
