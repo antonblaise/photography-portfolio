@@ -77,18 +77,21 @@ Add rows in the `camera` and `film_stocks` tables, and then the `photos` table, 
 
 Go to `Authentication` > `Policies`, and enable read access for all users for all 3 tables.
 
-### Connect Supabase to Vercel
+### Connect Supabase and Cloudinary to Vercel
 
 * On Supabase, go to `Project Overview`, copy the `Project URL`.
 * On Vercel, go to `Environment Variables`, add `NEXT_PUBLIC_SUPABASE_URL`, and paste the Supabase Project URL in.
 * On Supabase, go to `Settings` > `API Keys` > `Legacy anon, service_role API keys`, copy the `anon` `public`.
 * On Vercel, add another Environment Variable - `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and paste the API key in.
+* On Cloudinary, go to `Home` > `Dashboard` > `Product Environment` and copy the `Cloud name`.
+* On Vercel, add another Environment Variable - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, and paste the cloud name in.
 
 For local repository, create a file named `.env.local` in the root folder, and paste these in:
 
 ```plaintext
 NEXT_PUBLIC_SUPABASE_URL=<Project URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<API Key>
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=<Cloud name>
 ```
 
 Make sure `.env.local` is ignored by Git (`.gitignore`).
@@ -115,20 +118,32 @@ Create a Supabase client using those environment variables, store it in another 
 
 ### Create Actions Hub
 
-In `utils` folder, create another `.ts` file named `actions.ts`. 
+In `utils` folder, create another `.ts` file named `actions.ts`.
 
 For all the actions that the webpage does, they'll be defined in this file. For example, pulling data from Supabase, filtering, sorting, viewing, searching, calculating, etc.
 
-First, create a type named `Photos` to specify the type of each column's data from the Supabase `photos` table. Then, create and export an asynchronous function to get photos into an array.
+First, import the `supabase` client that we created. Create am object blueprint (interface) named `Photo `to specify the type of each column's data from the Supabase `photos` table. Then, create and export an asynchronous function to get photos using Supabase client into an array.
 
 ### Allow Cloudinary in Next
 
 In `next.config.ts`, add a configuration to whitelist (allow) Cloudinary server to load our images from there into this Next app.
 
-### Homework
+### Create Blank Pages
 
-1. Change the browser tab title of the webpage.
-2. Change the browser tab icon of the webpage.
+In Next.js, folders are routes.
+
+So, since we've planned to make 3 pages - About Me, Gallery, Contact, we'll create these 3 folders:
+
+* `app/about/page.tsx`
+* `app/gallery/page.tsx`
+* `app/contact/page.tsx`
+
+We'll first work on `Gallery` page. Install `react-photo-album` with this command:
+
+```bash
+npm install react-photo-album
+```
+
 
 
 ...
