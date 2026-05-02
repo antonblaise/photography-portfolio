@@ -72,6 +72,8 @@ Create data tables on Supabase:
   * film_stock_id
   * is_digital
   * date
+  * width
+  * height
 
 Add rows in the `camera` and `film_stocks` tables, and then the `photos` table, which relates to the previous two, to populate the database. Use photo URLs from Cloudinary.
 
@@ -96,7 +98,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=<Cloud name>
 
 Make sure `.env.local` is ignored by Git (`.gitignore`).
 
-## Phase 3: Build APIs and Main Page
+## Phase 3: Build APIs and Pages
 
 Now we work on the git repository.
 
@@ -138,6 +140,46 @@ So, since we've planned to make 3 pages - About Me, Gallery, Contact, we'll crea
 * `app/gallery/page.tsx`
 * `app/contact/page.tsx`
 
+Do not leave them empty, or else Vercel can't deploy the app.
+
+Put a bare minimum placeholder code into each of them as such:
+
+```typescript
+export default function AboutPage() {
+    return (
+        <div>
+            <p>Coming soon. 📸</p>
+        </div>
+    )
+}
+```
+
+Change the function's name accordingly.
+
+**(Optional) Link the subpages to the main/home page**
+
+Replace the contents of `src/app/page.tsx` with:
+
+```typescript
+import Link from "next/link";
+
+export default function HomePage() {
+  return (
+    <main>
+      <nav>
+        <ul className="text-blue-300">
+          <li><Link href="/gallery">Gallery</Link></li>
+          <li><Link href="/about">About Me</Link></li>
+          <li><Link href="/contact">Contact</Link></li>
+        </ul>
+      </nav>
+    </main>
+  )
+}
+```
+
+### Page 1: Gallery
+
 We'll first work on `Gallery` page. Install `react-photo-album` with this command:
 
 ```bash
@@ -146,4 +188,4 @@ npm install react-photo-album
 
 
 
-...
+*To be continued.*
