@@ -14,6 +14,8 @@ interface Photo {
     } | null;       // Null for when data fails to load
     is_digital: boolean;
     date: string;
+    width: number;
+    height: number;
 }
 
 export async function getPhotos(): Promise<Photo[]> {
@@ -26,7 +28,9 @@ export async function getPhotos(): Promise<Photo[]> {
             cameras ( name ),
             film_stocks ( name ),
             is_digital,
-            date
+            date,
+            width,
+            height
         `)
         .order('date', { ascending: false });
 

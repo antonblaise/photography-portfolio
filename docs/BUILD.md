@@ -110,7 +110,7 @@ npm install @supabase/supabase-js
 
 ### Create Supabase Client
 
-Create a folder named `utils`. Inside it, create a `.ts `file named `supabase.ts`.
+Create a folder in `src` named `utils `. Inside it, create a `.ts `file named `supabase.ts`.
 
 Import 'create client' from supabase module.
 
@@ -148,35 +148,34 @@ Put a bare minimum placeholder code into each of them as such:
 export default function AboutPage() {
     return (
         <div>
+            <h1>About Me</h1>
             <p>Coming soon. 📸</p>
         </div>
     )
 }
 ```
 
-Change the function's name accordingly.
+Change the function's name and the header accordingly.
 
-**(Optional) Link the subpages to the main/home page**
+### The Top Nav Bar
 
-Replace the contents of `src/app/page.tsx` with:
+In `src/app/layout.tsx`, create a basic top navigation bar using `Link` to include all pages (even the home page).
 
-```typescript
-import Link from "next/link";
+Study/implement these:
 
-export default function HomePage() {
-  return (
-    <main>
-      <nav>
-        <ul className="text-blue-300">
-          <li><Link href="/gallery">Gallery</Link></li>
-          <li><Link href="/about">About Me</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
-        </ul>
-      </nav>
-    </main>
-  )
-}
-```
+* what should be imported?
+* name the main function as `RootLayout`, and how to pass the children into it as input argument.
+* where to place the `children`, which is the placeholder for all the pages?
+* what is a node?
+* some basic Tailwind CSS to organise the content.
+* we may use tags other than `<div>`, `<h1>` and `<p>`, such as `<main>` and `<nav>`. Why, and how are they different?
+
+Be free to experiment and explore.
+
+*References:*
+
+* *https://tailwindcss.com/docs*
+* *https://nerdcave.com/tailwind-cheat-sheet*
 
 ### Page 1: Gallery
 
@@ -185,7 +184,5 @@ We'll first work on `Gallery` page. Install `react-photo-album` with this comman
 ```bash
 npm install react-photo-album
 ```
-
-
 
 *To be continued.*
