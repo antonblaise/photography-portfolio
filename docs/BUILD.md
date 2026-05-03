@@ -227,13 +227,16 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
        * Supabase `height ` → `height`
        * Supabase `title` → `alt`
      * Pass the contant into the `useState` function that sets the main `photos` constant.
+     * Set `hasMounted` to `true` to signal that all photos have indeed been loaded.
      * Build an arrow function (stored in a constant) to calculate the row height and spacing using `window.innerWidth`, and store the results with the `useState` functions of constants 'row height' and 'spacing' respectively.
        * If greater than **768px**, then it's considered medium (desktop). Otherwise, it's mobile.
      * Call the function once.
      * Add window event listener to listen for `resize` and trigger the function.
-     * Set `hasMounted` to `true`, as we're finished with mounting the component.
      * At the end of this  `useEffect`, return an arrow function to remove the event listener, which will be run upon component unmount.
    * Now, in the `return` section of this function:
-     * Insert a `RowsPhotoAlbum` element by passing the `photos` constant into it, and also the 'row height' and 'spacing' into `targetRowHeight `and `spacing` respectively.
+     * Show the page title. Feel free to style and design it as you like.
+     * Open an expression using curly braces `{}`. Inside the expression, use a ternary operator to decide what to render when  `hasMounted `is `true `and is `false`.
+     * When `false`: show a Tailwind spinner to indicate the loading state.
+     * When `true`: Insert a `RowsPhotoAlbum `element by passing the `photos `constant into it, and also the 'row height' and 'spacing' into `targetRowHeight `and `spacing` respectively.
 
 *To be continued.*

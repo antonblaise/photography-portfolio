@@ -50,38 +50,24 @@ export default function GalleryPage() {
         return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
 
     }, []);
-
-    if (!hasMounted) {
-        return (
-            <div className="flex justify-center pt-50 items-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-gray-800 dark:border-gray-200"></div>
-            </div>
-        );
-    }
     
     return (
 
         <main className="p-5 md:p-10">
-            <h1 className="
+            <h1 className="flex justify-center tracking-widest p-5 text-xl md:p-10 md:text-3xl">GALLERY</h1>
+
+            { hasMounted ? (
+                <RowsPhotoAlbum
+                    photos={photos}
+                    targetRowHeight={rowHeight}
+                    spacing={spacing}
+                />
+            ) : (
+                <div className="flex justify-center pt-50 items-center min-h-[400px]">
+                    <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-gray-800 dark:border-gray-200"></div>
+                </div>
+            )}
             
-            flex
-            justify-center
-            tracking-widest
-
-            /* Mobile */
-            p-5
-            text-xl
-
-            /* Desktop */
-            md:p-10
-            md:text-3xl
-
-            ">GALLERY</h1>
-            <RowsPhotoAlbum
-                photos={photos}
-                targetRowHeight={rowHeight}
-                spacing={spacing}
-            />
         </main>
 
     );
