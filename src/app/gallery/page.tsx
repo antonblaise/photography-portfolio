@@ -36,7 +36,7 @@ export default function GalleryPage() {
         });
 
         const updateRowHeightAndSpacing = () => {
-            setRowHeight(window.innerWidth >= 768 ? 250 : 100);
+            setRowHeight(window.innerWidth >= 768 ? 250 : 150);
             setSpacing(window.innerWidth >= 768 ? 10 : 5);
         };
 
