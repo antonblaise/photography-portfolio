@@ -33,6 +33,9 @@ export default function GalleryPage() {
             )));
 
             setPhotos(formattedPhotos);
+
+            // Only raise the flag when all photos have indeed been loaded.
+            setHasMounted(true);
         });
 
         const updateRowHeightAndSpacing = () => {
@@ -44,14 +47,18 @@ export default function GalleryPage() {
 
         window.addEventListener('resize', updateRowHeightAndSpacing);
 
-        setHasMounted(true);
-
         return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
 
     }, []);
 
-    if (!hasMounted) return null;
-
+    if (!hasMounted) {
+        return (
+            <div className="flex justify-center pt-50 items-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-gray-800 dark:border-gray-200"></div>
+            </div>
+        );
+    }
+    
     return (
 
         <main className="p-5 md:p-10">
