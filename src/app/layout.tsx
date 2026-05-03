@@ -1,6 +1,6 @@
-import React from "react"
-import Link from "next/link"
-import "./globals.css"
+import React from "react";
+import Link from "next/link";
+import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,13 +11,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           flex
           flex-row
 
-          /* For mobile*/
+          /* Mobile*/
           pt-5
           gap-10
           text-xs
           justify-center
 
-          /* For desktop */
+          /* Desktop */
           md:pr-20
           md:pt-10
           md:gap-20
@@ -37,6 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
       </body>
     </html>
-  )
+  );
 }
 

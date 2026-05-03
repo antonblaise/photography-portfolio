@@ -157,6 +157,8 @@ export default function AboutPage() {
 
 Change the function's name and the header accordingly.
 
+*FYI: **No need** to import `globals.css` into the pages to style the page with Tailwind.*
+
 ### The Top Nav Bar
 
 In `src/app/layout.tsx`, create a basic top navigation bar using `Link` to include all pages (even the home page).
@@ -169,6 +171,8 @@ Study/implement these:
 * what is a node?
 * some basic Tailwind CSS to organise the content.
 * we may use tags other than `<div>`, `<h1>` and `<p>`, such as `<main>` and `<nav>`. Why, and how are they different?
+* how to implement hover effect (or any other customisations) across all Links?
+* handle the cases for when viewed on mobile vs on desktop. Ensure nothing goes out of viewport.
 
 Be free to experiment and explore.
 
@@ -177,12 +181,59 @@ Be free to experiment and explore.
 * *https://tailwindcss.com/docs*
 * *https://nerdcave.com/tailwind-cheat-sheet*
 
-### Page 1: Gallery
+### Page 1: Gallery - Display the Photos
 
-We'll first work on `Gallery` page. Install `react-photo-album` with this command:
+We'll first work on `Gallery` page to display the photos. We will not implement any filter for now.
+
+Install `react-photo-album` with this command:
 
 ```bash
 npm install react-photo-album
 ```
+
+We'll follow these specs in this page:
+
+|            | Desktop | Mobile |
+| ---------- | :-----: | :----: |
+| Row height |  250px  | 125px |
+| Spacing    |  10px  |  5px  |
+
+In the file `src/app/gallery/page.tsx`, this is what we'll do.
+
+1. Specify 'use client' on top of the file.
+   * We depend on the client's device viewport to decide the rows' heights and photos' spacings.
+2. Import the necessary modules:
+   * the `getPhotos` action that we defined.
+   * `RowsPhotoAlbum ` from `react-photo-album`.
+   * `react-photo-album/rows.css` for styling.
+   * React: `useState` for data handling, and `useEffect` to run code section when page is loaded.
+3. Create a blueprint/type (interface) for the photo object used in this page.
+   * keys:
+     * src - source URL
+     * width - width of photo in pixels
+     * height - height of photo in pixels
+     * alt - alt text of photo
+4. Create a function to render the gallery page content. This is called a 'component'.
+   * Use `useState` to define these constants and functions to assign them data.
+     * `hasMounted` (boolean flag to check and signal if the page has already mounted)
+     * photos (array of type Photo)
+     * row height (number)
+     * spacing (number)
+   * Build a `useEffect` section
+     * Load photos using `getPhotos` and store into a variable.
+     * Use `.map` to map each photo object from the variable into a new constant in the format acceptable by `RowsPhotoAlbum`
+       * Supabase `image_url` → `src`
+       * Supabase `width` → `width`
+       * Supabase `height ` → `height`
+       * Supabase `title` → `alt`
+     * Pass the contant into the `useState` function that sets the main `photos` constant.
+     * Build an arrow function (stored in a constant) to calculate the row height and spacing using `window.innerWidth`, and store the results with the `useState` functions of constants 'row height' and 'spacing' respectively.
+       * If greater than **768px**, then it's considered medium (desktop). Otherwise, it's mobile.
+     * Call the function once.
+     * Add window event listener to listen for `resize` and trigger the function.
+     * Set `hasMounted` to `true`, as we're finished with mounting the component.
+     * At the end of this  `useEffect`, return an arrow function to remove the event listener, which will be run upon component unmount.
+   * Now, in the `return` section of this function:
+     * Insert a `RowsPhotoAlbum` element by passing the `photos` constant into it, and also the 'row height' and 'spacing' into `targetRowHeight `and `spacing` respectively.
 
 *To be continued.*
