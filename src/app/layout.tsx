@@ -10,10 +10,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           tracking-widest
           flex
           flex-row
-          pt-10
-          pr-20
-          gap-20
-          justify-end
+
+          /* For mobile*/
+          pt-5
+          gap-10
+          text-xs
+          justify-center
+
+          /* For desktop */
+          md:pr-20
+          md:pt-10
+          md:gap-20
+          md:text-base
+          md:justify-end
+
+          /* Hover effects */
           [&>a]:hover:text-gray-400
           [&>a]:hover:duration-500
         ">
