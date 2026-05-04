@@ -13,13 +13,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           /* Mobile*/
           pt-5
-          gap-10
           text-xs
           justify-center
 
           /* Desktop */
           md:pr-20
-          md:pt-10
+          md:pt-5
           md:gap-20
           md:text-base
           md:justify-end
@@ -27,6 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           /* Hover effects */
           [&>a]:hover:text-gray-400
           [&>a]:hover:duration-500
+
+          /* Expand clickable region */
+          [&>a]:px-5
+          [&>a]:py-5
         ">
           <Link href="/">Home</Link>
           <Link href="/gallery">Gallery</Link>

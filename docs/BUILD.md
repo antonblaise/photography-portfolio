@@ -173,6 +173,7 @@ Study/implement these:
 * we may use tags other than `<div>`, `<h1>` and `<p>`, such as `<main>` and `<nav>`. Why, and how are they different?
 * how to implement hover effect (or any other customisations) across all Links?
 * handle the cases for when viewed on mobile vs on desktop. Ensure nothing goes out of viewport.
+* Expand the clickable region beyond just the text for better UX while not messing up the overall look.
 
 Be free to experiment and explore.
 
@@ -220,16 +221,17 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
      * row height (number)
      * spacing (number)
    * Build a `useEffect` section
-     * Load photos using `getPhotos` and store into a variable.
-     * Use `.map` to map each photo object from the variable into a new constant in the format acceptable by `RowsPhotoAlbum`
-       * Supabase `image_url` → `src`
-       * Supabase `width` → `width`
-       * Supabase `height ` → `height`
-       * Supabase `title` → `alt`
-     * Pass the contant into the `useState` function that sets the main `photos` constant.
-     * Set `hasMounted` to `true` to signal that all photos have indeed been loaded.
-     * Build an arrow function (stored in a constant) to calculate the row height and spacing using `window.innerWidth`, and store the results with the `useState` functions of constants 'row height' and 'spacing' respectively.
+     * Load raw photos using `getPhotos` and store into a variable that acts as the input of `.then()`.
+       * Use `.map` to map each photo object from the variable into a new constant in the format acceptable by `RowsPhotoAlbum`
+         * Supabase `image_url` → `src`
+         * Supabase `width` → `width`
+         * Supabase `height ` → `height`
+         * Supabase `title` → `alt`
+       * Pass the contant into the `useState` function that sets the main `photos` constant.
+       * Set `hasMounted` to `true` to signal that all photos have indeed been loaded.
+     * Build an arrow function (stored in a constant) to calculate the row height and spacing using `window.innerWidth`.
        * If greater than **768px**, then it's considered medium (desktop). Otherwise, it's mobile.
+       * Store the results with the `useState` functions of constants 'row height' and 'spacing' respectively.
      * Call the function once.
      * Add window event listener to listen for `resize` and trigger the function.
      * At the end of this  `useEffect`, return an arrow function to remove the event listener, which will be run upon component unmount.
@@ -238,5 +240,14 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
      * Open an expression using curly braces `{}`. Inside the expression, use a ternary operator to decide what to render when  `hasMounted `is `true `and is `false`.
      * When `false`: show a Tailwind spinner to indicate the loading state.
      * When `true`: Insert a `RowsPhotoAlbum `element by passing the `photos `constant into it, and also the 'row height' and 'spacing' into `targetRowHeight `and `spacing` respectively.
+   * Optimisations
+     * Loadnig the gallery faster.
+       * Initially, all the photos in the gallery are in full size.
+       * We can make use of Cloudinary to optimise the size of each photo by modifying its URL.
+       * `getPhotos()` → `.then()` → `.map()` : For key `src`, which is the URL, replace the string `/upload` with `/upload/f_auto,q_auto,w_800`.
+         * `f_auto`: Automatically pick a format (e.g. webp, avif)
+         * `q_auto`: Automatically set the quality with compression
+         * `w_800`: Maximum 800px wide each image. Doesn't affect aspect ratio.
+
 
 *To be continued.*

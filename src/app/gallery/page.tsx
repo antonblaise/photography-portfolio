@@ -23,14 +23,14 @@ export default function GalleryPage() {
 
         getPhotos()
         .then((rawPhotos) => {
-            const formattedPhotos = rawPhotos.map((p) => ((
+            const formattedPhotos = rawPhotos.map((p) => (
                 {
-                    src: p.image_url,
+                    src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
                     width: p.width,
                     height: p.height,
                     alt: p.title || "photo"
                 }
-            )));
+            ));
 
             setPhotos(formattedPhotos);
 
@@ -54,7 +54,7 @@ export default function GalleryPage() {
     return (
 
         <main className="p-5 md:p-10">
-            <h1 className="flex justify-center tracking-widest p-5 text-xl md:p-10 md:text-3xl">GALLERY</h1>
+            <h1 className="flex justify-center tracking-widest pb-5 text-xl md:pb-10 md:text-3xl">GALLERY</h1>
 
             { hasMounted ? (
                 <RowsPhotoAlbum
