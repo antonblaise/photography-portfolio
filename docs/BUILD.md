@@ -1,5 +1,7 @@
 # Project Milestones
 
+## Tech Stack
+
 Frontend: Next.js with Tailwind CSS
 
 Host: [Vercel](https://vercel.com)
@@ -13,6 +15,8 @@ Version Control: [GitHub](https://github.com)
 Language: TypeScript
 
 GitHub project backlog: https://github.com/users/antonblaise/projects/1
+
+Image optimiser: [Squoosh.app](https://squoosh.app)
 
 ## Phase 1: Environment Setup
 
@@ -129,6 +133,18 @@ First, import the `supabase` client that we created. Create am object blueprint 
 ### Allow Cloudinary in Next
 
 In `next.config.ts`, add a configuration to whitelist (allow) Cloudinary server to load our images from there into this Next app.
+
+```typescript
+images: {
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'res.cloudinary.com',
+      pathname: `/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/**`,
+    },
+  ],
+},
+```
 
 ### Create Blank Pages
 
@@ -248,6 +264,5 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
          * `f_auto`: Automatically pick a format (e.g. webp, avif)
          * `q_auto`: Automatically set the quality with compression
          * `w_800`: Maximum 800px wide each image. Doesn't affect aspect ratio.
-
 
 *To be continued.*
