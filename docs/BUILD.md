@@ -1,4 +1,4 @@
-# Project Milestones
+# Project Milestones 🌠
 
 ## Tech Stack
 
@@ -18,7 +18,7 @@ GitHub project backlog: https://github.com/users/antonblaise/projects/1
 
 Image optimiser: [Squoosh.app](https://squoosh.app)
 
-## Phase 1: Environment Setup
+## Phase 1️⃣: Environment Setup
 
 ### Remote and Local Repositories
 
@@ -50,7 +50,7 @@ Push all the changes.
 
 Sign up for Vercel, Supabase and Cloudinary.
 
-## Phase 2: Design Database and Link to App
+## Phase 2️⃣: Design Database and Link to App
 
 Link GitHub project to Vercel and deploy it.
 
@@ -102,7 +102,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=<Cloud name>
 
 Make sure `.env.local` is ignored by Git (`.gitignore`).
 
-## Phase 3: Build APIs and Pages
+## Phase 3️⃣: Build APIs and Pages
 
 Now we work on the git repository.
 
@@ -198,15 +198,19 @@ Be free to experiment and explore.
 * *https://tailwindcss.com/docs*
 * *https://nerdcave.com/tailwind-cheat-sheet*
 
-### Page 1: Gallery - Display the Photos
+## Phase 4️⃣: The Gallery - Display the Photos
 
 We'll first work on `Gallery` page to display the photos. We will not implement any filter for now.
+
+### Install Node Package
 
 Install `react-photo-album` with this command:
 
 ```bash
 npm install react-photo-album
 ```
+
+### Gallery Layout Plan
 
 We'll follow these specs in this page:
 
@@ -216,6 +220,8 @@ We'll follow these specs in this page:
 | Spacing    |  10px  |  5px  |
 
 Note that the row heights will not be exact. Those are approximates that `RowsPhotoAlbum` follows to create the justified layout.
+
+### Build the Gallery
 
 In the file `src/app/gallery/page.tsx`, this is what we'll do.
 
@@ -232,7 +238,8 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
      * width - width of photo in pixels
      * height - height of photo in pixels
      * alt - alt text of photo
-4. Create a function to render the gallery page content. This is called a 'component'.
+4. Go into the function named `GalleryPage` which we created before. This is called a 'component'. It renders the gallery page content.
+   * Clear all of its old content. We're going to build it for real now.
    * Use `useState` to define these constants and functions to assign them data.
      * `hasMounted` (boolean flag to check and signal if the page has already mounted)
      * photos (array of type Photo)
@@ -258,13 +265,14 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
      * Open an expression using curly braces `{}`. Inside the expression, use a ternary operator to decide what to render when  `hasMounted `is `true `and is `false`.
      * When `false`: show a Tailwind spinner to indicate the loading state.
      * When `true`: Insert a `RowsPhotoAlbum `element by passing the `photos `constant into it, and also the 'row height' and 'spacing' into `targetRowHeight `and `spacing` respectively.
-   * Optimisations
-     * Loadnig the gallery faster.
+   * Finally - Optimisations
+     * Loading the gallery faster
        * Initially, all the photos in the gallery are in full size.
        * We can make use of Cloudinary to optimise the size of each photo by modifying its URL.
        * `getPhotos()` → `.then()` → `.map()` : For key `src`, which is the URL, replace the string `/upload` with `/upload/f_auto,q_auto,w_800`.
          * `f_auto`: Automatically pick a format (e.g. webp, avif)
          * `q_auto`: Automatically set the quality with compression
          * `w_800`: Maximum 800px wide each image. Doesn't affect aspect ratio.
+       * As a result, each photo on Gallery is around 100 or less kB.
 
 *To be continued.*
