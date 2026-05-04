@@ -212,8 +212,10 @@ We'll follow these specs in this page:
 
 |            | Desktop | Mobile |
 | ---------- | :-----: | :----: |
-| Row height |  250px  | 125px |
+| Row height |  250px  | 150px |
 | Spacing    |  10px  |  5px  |
+
+Note that the row heights will not be exact. Those are approximates that `RowsPhotoAlbum` follows to create the justified layout.
 
 In the file `src/app/gallery/page.tsx`, this is what we'll do.
 
