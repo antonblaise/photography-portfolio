@@ -1,6 +1,10 @@
+'use client';
 
+import { useState, useEffect } from "react";
 
 export default function HomePage() {
+
+  const [hasMounted, sethasMounted] = useState(false);
 
   const cloudinaryUrlPrefix = "https://res.cloudinary.com/drrafhtry/image/upload/f_auto,q_auto"
 
@@ -38,8 +42,12 @@ export default function HomePage() {
     },
   ]
 
+  useEffect(() => {
+    sethasMounted(true);
+  }, []);
+
   return (
-    <main className="flex flex-col md:flex-row w-[90%]">
+    <main className={`flex flex-col md:flex-row w-[90%] duration-500 ease-out transition-all ${hasMounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}>
 
       {/* Left side */}
       <div className="flex-1 text-right md:p-20">
