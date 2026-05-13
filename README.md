@@ -179,9 +179,14 @@ Change the function's name and the header accordingly.
 
 *FYI: **No need** to import `globals.css` into the pages to style the page with Tailwind.*
 
-### The Top Nav Bar
+### The Top Nav Bar and Footer
 
 In `src/app/layout.tsx`, create a basic top navigation bar using `Link` to include all pages (even the home page).
+
+Then, write and style a footer using the `<footer>` element such that:
+
+* when the content is shorter than the page height, it stays at the bottom of the page.
+* when the content is longer than the page height, it's always the bottommost element.
 
 Study/implement these:
 
@@ -279,4 +284,32 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
          * `w_800`: Maximum 800px wide each image. Doesn't affect aspect ratio.
        * As a result, each photo on Gallery is around 100 or less kB.
 
-*To be continued.*
+## Phase 5️⃣: The Home Page
+
+Here's the idea for the Home page design:
+
+* Two sides, left and right. (Desktop view)
+* Left side:
+  * My name "Antonius" in large font.
+  * Film photography slogan - "Advance, Compose, Shutter, Repeat" in small font, shown in lines.
+  * Everything is aligned to the right.
+* Right side:
+  * A 2x3 grid.
+  * Preview of 1 photo for each film stock, 5 in total.
+  * The 6th cell is a wording - "And more."
+  * Every photo shown has fixed 2:3 aspect ratio, cropped and centered.
+
+### Implementation
+
+`app/page.tsx`
+
+* Store Cloudinary photos URL prefix into a constant. Use `f_auto,q_auto` to optimise the page's loading.
+* Make a constant to store the slogan. Since I want to show them in lines, I use a list.
+* Make another list constant to store the specifications of the grids on the right side, namely the image source URL and its wording.
+* Use Flexbox in the `<main>` section and use it to order the elements in columns.
+* Create 2 `<div>`, which becomes the left and right columns of the Flexbox.
+* Implement and design the left side as specified in the idea. For the slogan, use `.map()` to gracefully loop through and display each line.
+* For the right side, also use `.map()` to loop through each preview item, including the "And more.". Use ternary operator to help in styling either the photo or the wording.
+* Feel free to play around and tweak the Tailwind CSS stylings as needed. Don't forget to consider both mobile and desktop use cases.
+
+Browse and get awesome fonts here: https://fonts.google.com

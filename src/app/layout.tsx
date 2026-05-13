@@ -5,7 +5,7 @@ import "./globals.css";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen flex flex-col">
         <nav className="
           tracking-widest
           flex
@@ -37,7 +37,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="contact">Contact</Link>
         </nav>
 
-        {children}
+        <main className="flex-1">
+          {children}
+        </main>
+
+        <footer className="w-full text-center pb-5 tracking-widest text-[8px] md:text-[12px] opacity-50 font-light">
+          © 2026 Antonius Blaise • Built with Next.js, Supabase & Cloudinary
+        </footer>
+
       </body>
     </html>
   );
