@@ -43,7 +43,7 @@ export default function ContactPage() {
 
     return (
         <main
-            className={`min-h-[80vh] md:px-100 pt-15 md:py-50 flex grid md:grid-cols-3 md:grid-rows-2 items-center justify-center ${fadeInAnimation(hasMounted)}`}
+            className={`min-h-[80vh] md:px-200 pt-15 md:py-50 flex grid md:grid-cols-3 md:grid-rows-2 items-center justify-center ${fadeInAnimation(hasMounted)}`}
         >
             {hasMounted && contactLinks.map((link, index) => (
                 <a
@@ -51,7 +51,7 @@ export default function ContactPage() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-center p-10 md:p-30 text-2xl md:text-5xl md:hover:scale-120 duration-200"
+                    className="flex justify-center p-10 md:p-20 text-2xl md:text-5xl md:hover:scale-120 duration-200"
                 >
                     <i className={link.icon}/>
                 </a>
