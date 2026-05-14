@@ -52,11 +52,6 @@ export default function ContactPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex justify-center p-10 md:p-30 text-2xl md:text-5xl md:hover:scale-120 duration-200"
-                                style={
-              {
-                transitionDelay: `${100 * (index+1) + overallDelayMs}ms`
-              }
-            }
                 >
                     <i className={link.icon}/>
                 </a>
