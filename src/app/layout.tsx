@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
 
-        <footer className="w-full text-center pb-5 tracking-[2] text-xs md:text-[12px] opacity-50 font-light">
+        <footer className="w-full text-center pb-5 md:tracking-[2] text-xs md:text-[12px] opacity-50 font-light">
           <Link
             href="https://github.com/antonblaise/photography-portfolio"
             className="md:hover:opacity-50 duration-200"
