@@ -55,7 +55,7 @@ export default function HomePage() {
       <div 
         className={`flex-1 text-right md:p-20 ${fadeInAnimation(hasMounted, "delay-100")}`}
       >
-        <p className="share-tech-mono-regular text-4xl md:text-8xl py-10 md:py-20 tracking-widest md:-translate-x-50 md:translate-y-40">
+        <p className="share-tech-mono-regular text-4xl md:text-8xl py-10 md:py-20 md:-translate-x-50 md:translate-y-40">
           ANTONIUS
         </p>
         {sloganLines.map((line, index) => (
@@ -81,7 +81,7 @@ export default function HomePage() {
           >
             {item.src && <img
               src={`${cloudinaryUrlPrefix}/${item.src}`}
-              className="aspect-[2/3] object-cover"
+              className="aspect-[2/3] object-cover md:hover:opacity-60 duration-200"
             />}
             <p>{item.caption}</p>
           </div>

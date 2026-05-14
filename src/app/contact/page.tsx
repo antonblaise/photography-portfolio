@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import "@/utils/animations";
+import Link from "next/link";
 import { fadeInAnimation } from "@/utils/animations";
 
 export default function ContactPage() {
@@ -46,7 +47,7 @@ export default function ContactPage() {
             className={`min-h-[80vh] md:px-200 pt-15 md:py-50 flex grid md:grid-cols-3 md:grid-rows-2 items-center justify-center ${fadeInAnimation(hasMounted)}`}
         >
             {hasMounted && contactLinks.map((link, index) => (
-                <a
+                <Link
                     key={index}
                     href={link.url}
                     target="_blank"
@@ -54,7 +55,7 @@ export default function ContactPage() {
                     className="flex justify-center p-10 md:p-20 text-2xl md:text-5xl md:hover:scale-120 duration-200"
                 >
                     <i className={link.icon}/>
-                </a>
+                </Link>
             ))}
         </main>
     );

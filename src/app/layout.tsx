@@ -41,8 +41,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
 
-        <footer className="w-full text-center pb-5 tracking-widest text-[8px] md:text-[12px] opacity-50 font-light">
-          © {new Date().getFullYear()} Antonius Blaise • Built with Next.js, PostgreSQL & Cloudinary
+        <footer className="w-full text-center pb-5 tracking-[2] text-xs md:text-[12px] opacity-50 font-light">
+          <Link
+            href="https://github.com/antonblaise/photography-portfolio"
+            className="md:hover:opacity-50 duration-200"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            © {new Date().getFullYear()} Antonius Blaise • Built with Next.js, PostgreSQL & Cloudinary
+          </Link>
         </footer>
 
       </body>
