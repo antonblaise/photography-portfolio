@@ -284,7 +284,9 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
          * `w_800`: Maximum 800px wide each image. Doesn't affect aspect ratio.
        * As a result, each photo on Gallery is around 100 or less kB.
 
-## Phase 5️⃣: The Home Page
+## Phase 5️⃣: The Home and Contact Page
+
+#### Ideation
 
 Here's the idea for the Home page design:
 
@@ -299,9 +301,20 @@ Here's the idea for the Home page design:
   * The 6th cell is a wording - "And more."
   * Every photo shown has fixed 2:3 aspect ratio, cropped and centered.
 
+As for the Contact page, I'll make it simple. Just ordered grids of buttons.
+
+* GitHub
+* Instagram
+* LinkedIn
+* Email
+* YouTube
+* Facebook
+
 ### Implementation
 
-`app/page.tsx`
+Browse and get awesome fonts here: https://fonts.google.com
+
+**Home** page -  `app/page.tsx`
 
 * Store Cloudinary photos URL prefix into a constant. Use `f_auto,q_auto` to optimise the page's loading.
 * Make a constant to store the slogan. Since I want to show them in lines, I use a list.
@@ -312,4 +325,27 @@ Here's the idea for the Home page design:
 * For the right side, also use `.map()` to loop through each preview item, including the "And more.". Use ternary operator to help in styling either the photo or the wording.
 * Feel free to play around and tweak the Tailwind CSS stylings as needed. Don't forget to consider both mobile and desktop use cases.
 
-Browse and get awesome fonts here: https://fonts.google.com
+**Contact** page - `app/contact/page.tsx`
+
+Browse icons here: https://www.flaticon.com/icon-fonts-most-downloaded
+
+* Import Flaticon brands and regular-rounded and  into `globals.css`.
+
+  ```css
+  @import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css');
+  @import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
+  ```
+  On Flaticon, click the `CDN` of the icon to copy the import link.
+* Create a constant list to store each link's icon and URL.
+* Use `.map()` to loop through each one to create links `<a>` using the icons and URLs.
+* Use `<i>` to display the icons in its `className`. This element is wrapped inside the `<a>` element.
+* Tips:
+
+  * `target="_blank"` - Open in new tab.
+  * `rel="noopener noreferrer"` - Security feature.
+    * `noopener`: prevents the new page from accessing `window.opener` of the original page, blocking potential malicious control of the opener page.
+    * `noreferrer`: also prevents sending the referrer URL to the new page and usually implies `noopener` in modern browsers.
+  * For Email, use this as link: `mailto:youremail@example.com`.
+  * Use padding to expand clickable area.
+* Position all icons in the center of the page. Space and size them accordingly for the minimalistic look.
+* Use Tailwind CSS to further style and position them as you like.

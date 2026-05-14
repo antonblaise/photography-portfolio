@@ -4,6 +4,8 @@ import { getPhotos } from "@/utils/actions";
 import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
 import { useEffect, useState } from "react";
+import "@/utils/animations";
+import { fadeInAnimation } from "@/utils/animations";
 
 interface Photo {
     src: string;
@@ -54,7 +56,11 @@ export default function GalleryPage() {
     return (
 
         <main className="p-5 md:p-10">
-            <h1 className="flex justify-center tracking-widest pb-5 text-xl md:pb-10 md:text-3xl">GALLERY</h1>
+            <h1
+                className={`flex justify-center tracking-widest pb-5 text-xl md:pb-10 md:text-3xl ${fadeInAnimation(hasMounted)}`}
+            >
+                GALLERY
+            </h1>
 
             { hasMounted ? (
                 <RowsPhotoAlbum
