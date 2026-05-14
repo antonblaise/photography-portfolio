@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
 
         <footer className="w-full text-center pb-5 tracking-widest text-[8px] md:text-[12px] opacity-50 font-light">
-          © 2026 Antonius Blaise • Built with Next.js, Supabase & Cloudinary
+          © {new Date().getFullYear()} Antonius Blaise • Built with Next.js, PostgreSQL & Cloudinary
         </footer>
 
       </body>
