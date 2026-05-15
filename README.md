@@ -235,19 +235,16 @@ Note that the row heights will not be exact. Those are approximates that `RowsPh
 In the file `src/app/gallery/page.tsx`, this is what we'll do.
 
 1. Specify 'use client' on top of the file.
+
    * We depend on the client's device viewport to decide the rows' heights and photos' spacings.
 2. Import the necessary modules:
+
    * the `getPhotos` action that we defined.
    * `RowsPhotoAlbum ` from `react-photo-album`.
    * `react-photo-album/rows.css` for styling.
    * React: `useState` for data handling, and `useEffect` to run code section when page is loaded.
-3. Create a blueprint/type (interface) for the photo object used in this page.
-   * keys:
-     * src - source URL
-     * width - width of photo in pixels
-     * height - height of photo in pixels
-     * alt - alt text of photo
-4. Go into the function named `GalleryPage` which we created before. This is called a 'component'. It renders the gallery page content.
+3. Go into the function named `GalleryPage` which we created before. This is called a 'component'. It renders the gallery page content.
+
    * Clear all of its old content. We're going to build it for real now.
    * Use `useState` to define these constants and functions to assign them data.
      * `hasMounted` (boolean flag to check and signal if the page has already mounted)
@@ -286,7 +283,7 @@ In the file `src/app/gallery/page.tsx`, this is what we'll do.
 
 ## Phase 5️⃣: The Home and Contact Page
 
-#### Ideation
+### Ideation
 
 Here's the idea for the Home page design:
 
@@ -335,6 +332,7 @@ Browse icons here: https://www.flaticon.com/icon-fonts-most-downloaded
   @import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css');
   @import url('https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
   ```
+
   On Flaticon, click the `CDN` of the icon to copy the import link.
 * Create a constant list to store each link's icon and URL.
 * Use `.map()` to loop through each one to create links `<a>` using the icons and URLs.
@@ -349,3 +347,42 @@ Browse icons here: https://www.flaticon.com/icon-fonts-most-downloaded
   * Use padding to expand clickable area.
 * Position all icons in the center of the page. Space and size them accordingly for the minimalistic look.
 * Use Tailwind CSS to further style and position them as you like.
+
+## Phase 6: The Gallery Filters
+
+In this phase, there are two new implementations:
+
+* Filter the Gallery photos by:
+
+  * Film stock
+  * Camera
+
+### Implementation
+
+Step 1 - Modify the `getPhotos()` function in `utils/actions.ts` and test with arbiterary values in `gallery/page.tsx`.
+
+* Introduce input arguments/parameters:
+  * film stock IDs (number)
+  * camera IDs (number)
+* Do not execute the query immediately now. Instead, store it in a mutable variable first.
+* Then, for each filter, append the query with `in()` to only select the rows with columns that match the filters.
+
+Step 2 - Still in `utils/actions.ts`, create functions and interfaces
+
+* Create functions to get film stocks and cameras data from Supabase.
+* Create interfaces for `film stock` and `camera` respectively, just like `photo`.
+
+Step 3 - `app/gallery/page.tsx`
+
+* Import the new functions created in `actions.ts` into this file.
+* Then, create interfaces for `film stock` and `camera`, but they don't need to be formatted like `photo`.
+* Use `useState` to store film stocks and cameras data into constants.
+* Also, use `useState` to store their filters into constants.
+* In `useEffect()`:
+  * Set mount state as `false` at the very beginning, and `true` at the very end.
+  * Query Supabase using the functions from `actions.ts` and use their `useState` functions to store them.
+  * `useEffect` depends on film stocks filter and cameras filter. Which means, the page re-renders as long as they are changed.
+* Create function for the filters' checkboxes `<input>` to run when toggled.
+  * If the toggled item was checked, remove it from the checked list.
+  * Otherwise, add it into the checked list.
+* Use `<details>` element to create the filters. Study it. Tips: use `.map()` to avoid repeating the XMLs.
