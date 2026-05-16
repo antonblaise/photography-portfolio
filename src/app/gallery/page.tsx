@@ -5,7 +5,7 @@ import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
 import { useEffect, useState } from "react";
 import "@/utils/animations";
-import { fadeInAnimation } from "@/utils/animations";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 
 interface Photo {
     src: string;
@@ -40,13 +40,15 @@ export default function GalleryPage() {
     const filters = [
         {
             name: "Film Stocks",
-            list: filmStocks,
-            state: filmStocksFilter
+            options: filmStocks,
+            state: filmStocksFilter,
+            setState: setFilmStocksFilter
         },
         {
             name: "Cameras",
-            list: cameras,
-            state: camerasFilter
+            options: cameras,
+            state: camerasFilter,
+            setState: setCamerasFilter
         }
     ];
 
@@ -92,21 +94,7 @@ export default function GalleryPage() {
 
     }, [filmStocksFilter, camerasFilter]);
 
-    function handleFilterToggle(filter: string, id: number) {
 
-        if (filter == filters[0].name) {
-            setFilmStocksFilter((prev) => 
-                prev.includes(id) ? prev.filter((item) => item != id) : [...prev, id]
-            );
-        }
-
-        if (filter == filters[1].name) {
-            setCamerasFilter((prev) => 
-                prev.includes(id) ? prev.filter((item) => item != id) : [...prev, id]
-            );
-        }
-
-    }
     
     return (
 
@@ -122,27 +110,63 @@ export default function GalleryPage() {
             <div
                 className="flex flex-row md:justify-center md:gap-[20vw] py-5 md:p-10"
             >
-                {filters.map((filter) => (
-                    <details
-                        key={filter.name}
-                        className="p-5 italic tracking-widest hover:cursor-pointer"
-                    >
-                        <summary>{filter.name}</summary>
-                        <div
-                            className="flex flex-col fixed z-10 pt-5 md:p-5"
-                        >
-                            {filter.list.map((item) => (
-                                <button
-                                    key={item.name}
-                                    onClick={() => handleFilterToggle(filter.name, item.id)}
-                                    className={`flex border-transparent p-5 hover:cursor-pointer hover:scale-120 hover:opacity-100 transition-all bg-white dark:bg-black ${filter.state.includes(item.id) ? 'opacity-100' : 'opacity-60'}`}
-                                >
-                                    {item.name}
-                                </button>
-                            ))}
-                        </div>
-                    </details>
-                ))}
+                {
+                    filters.map((filter) => (
+                        <Listbox key={filter.name} value={filter.state} onChange={filter.setState} multiple>
+                            <ListboxButton
+                                className={`flex flex-row`}
+                            >
+                                <span
+                                    className="tracking-widest italic px-5 cursor-pointer hover:scale-120 transition-all ease-out duration-200"
+                                >{`> ${filter.name}`}</span>
+                                {
+                                    filter.state.length > 0
+                                    &&
+                                    <div>
+                                        <span
+                                            className="ml-2 bg-black text-white dark:bg-white dark:text-black text-xs px-2 py-0.5 rounded-full"
+                                        >
+                                            {filter.state.length}
+                                        </span>
+                                        <span>
+                                            <button
+                                                type="button"
+                                                className="px-5 translate-y-1 cursor-pointer opacity-50 scale-120 hover:scale-150 transition-all ease-out duration-200"
+                                                onClick={() => filter.setState([])}
+                                            >
+                                                <i className="fi fi-sr-cross-circle" />
+                                            </button>
+                                            
+                                        </span>
+                                    </div>
+                                }
+                            </ListboxButton>
+
+                            <ListboxOptions
+                                anchor="bottom start"
+                                className="space-y-2 translate-y-5"
+                            >
+                                {
+                                    filter.options.map((option) => (
+                                        <ListboxOption
+                                            key={option.id}
+                                            value={option.id}
+                                            className="
+                                                italic tracking-widest text-sm flex p-5 select-none justify-between cursor-pointer opacity-60 bg-black text-white dark:bg-white dark:text-black
+                                                transition-all ease-out duration-200
+                                                data-[focus]:text-yellow-500 data-[focus]:text-xl data-[focus]:opacity-100
+                                                data-[selected]:opacity-100 data-[selected]:font-bold
+                                            "
+                                        >
+                                            <span>{option.name}</span>
+                                        </ListboxOption>
+                                    ))
+                                }
+
+                            </ListboxOptions>
+                        </Listbox>
+                    ))
+                }
             </div>
 
             { 

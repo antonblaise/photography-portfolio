@@ -385,4 +385,5 @@ Step 3 - `app/gallery/page.tsx`
 * Create function for the filters' checkboxes `<input>` to run when toggled.
   * If the toggled item was checked, remove it from the checked list.
   * Otherwise, add it into the checked list.
-* Use `<details>` element to create the filters. Study it. Tips: use `.map()` to avoid repeating the XMLs.
+* Install `@headlessui/react`, study it and use its `Listbox` to build the filters.
+* Add a button to reset each filter.
