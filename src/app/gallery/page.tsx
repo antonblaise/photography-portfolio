@@ -28,6 +28,7 @@ interface Camera {
 
 export default function GalleryPage() {
 
+    // State and data
     const [hasMounted, setHasMounted] = useState<boolean>(false);
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [filmStocks, setFilmStocks] = useState<FilmStock[]>([]);
@@ -100,7 +101,15 @@ export default function GalleryPage() {
 
         <main className="p-5 md:p-10">
             <h1
-                className={`flex justify-center tracking-widest pb-5 text-xl md:pb-10 md:text-3xl`}
+                className="
+                    flex 
+                    justify-center 
+                    tracking-widest 
+                    pb-5 
+                    text-xl 
+                    md:pb-10 
+                    md:text-3xl 
+                "
             >
                 GALLERY
             </h1>
@@ -108,43 +117,79 @@ export default function GalleryPage() {
             
 
             <div
-                className="flex flex-row md:justify-center md:gap-[20vw] py-5 md:p-10"
+                className="
+                    flex flex-col md:flex-row items-center justify-center 
+                    space-y-[5%] md:space-x-[40%] md:space-y-0 
+                    py-5 md:p-10 
+                "
             >
                 {
                     filters.map((filter) => (
                         <Listbox key={filter.name} value={filter.state} onChange={filter.setState} multiple>
-                            <ListboxButton
-                                className={`flex flex-row`}
+                            <div
+                                className="
+                                    flex flex-row items-center
+                                "
                             >
-                                <span
-                                    className="tracking-widest italic px-5 cursor-pointer hover:scale-120 transition-all ease-out duration-200"
-                                >{`> ${filter.name}`}</span>
+                                <ListboxButton
+                                    className="flex flex-row items-center"
+                                >
+                                    <span
+                                        className="
+                                            flex flex-row items-center tracking-widest 
+                                            mx-2 md:mx-5 
+                                            italic text-xs md:text-lg 
+                                            cursor-pointer 
+                                            hover:scale-120 
+                                            transition-all ease-out duration-200 
+                                        "
+                                    >
+                                        <i className="
+                                                fi fi-rr-menu-burger 
+                                                w-8 h-4 md:w-12 
+                                                flex items-center justify-center 
+                                            "
+                                        />{filter.name}
+                                    </span>
+                                </ListboxButton>
                                 {
                                     filter.state.length > 0
                                     &&
-                                    <div>
-                                        <span
-                                            className="ml-2 bg-black text-white dark:bg-white dark:text-black text-xs px-2 py-0.5 rounded-full"
-                                        >
-                                            {filter.state.length}
-                                        </span>
-                                        <span>
-                                            <button
-                                                type="button"
-                                                className="px-5 translate-y-1 cursor-pointer opacity-50 scale-120 hover:scale-150 transition-all ease-out duration-200"
-                                                onClick={() => filter.setState([])}
-                                            >
-                                                <i className="fi fi-sr-cross-circle" />
-                                            </button>
-                                            
-                                        </span>
-                                    </div>
+                                    <span
+                                        className="
+                                            mx-2 
+                                            bg-black text-white 
+                                            dark:bg-white dark:text-black 
+                                            text-xs 
+                                            scale-80 md:scale-100 
+                                            px-2 py-0.5 
+                                            rounded-full 
+                                        "
+                                    >
+                                        {filter.state.length}
+                                    </span>
                                 }
-                            </ListboxButton>
+                                {
+                                    filter.state.length > 0
+                                    &&
+                                    <i 
+                                        className="
+                                            flex 
+                                            fi fi-sr-cross-circle 
+                                            opacity-50 md:scale-120 
+                                            hover:scale-150 
+                                            mx-2 
+                                            transition-all ease-out duration-200 
+                                        "
+                                        onClick={() => filter.setState([])}
+                                    />
+
+                                }
+                            </div>
 
                             <ListboxOptions
                                 anchor="bottom start"
-                                className="space-y-2 translate-y-5"
+                                className="space-y-2 mt-5"
                             >
                                 {
                                     filter.options.map((option) => (
@@ -152,10 +197,15 @@ export default function GalleryPage() {
                                             key={option.id}
                                             value={option.id}
                                             className="
-                                                italic tracking-widest text-sm flex p-5 select-none justify-between cursor-pointer opacity-60 bg-black text-white dark:bg-white dark:text-black
-                                                transition-all ease-out duration-200
-                                                data-[focus]:text-yellow-500 data-[focus]:text-xl data-[focus]:opacity-100
-                                                data-[selected]:opacity-100 data-[selected]:font-bold
+                                                flex justify-between 
+                                                select-none cursor-pointer opacity-60 
+                                                italic tracking-widest 
+                                                bg-black text-white dark:bg-white dark:text-black 
+                                                p-2 md:p-5 
+                                                text-xs md:text-sm 
+                                                transition-all ease-out duration-200 
+                                                md:data-[focus]:text-yellow-500 md:data-[focus]:text-xl md:data-[focus]:opacity-100 
+                                                data-[selected]:opacity-100 data-[selected]:font-bold data-[selected]:text-yellow-500 md:data-[selected]:text-white  
                                             "
                                         >
                                             <span>{option.name}</span>
