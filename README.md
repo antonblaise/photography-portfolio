@@ -348,7 +348,7 @@ Browse icons here: https://www.flaticon.com/icon-fonts-most-downloaded
 * Position all icons in the center of the page. Space and size them accordingly for the minimalistic look.
 * Use Tailwind CSS to further style and position them as you like.
 
-## Phase 6: The Gallery Filters
+## Phase 6️⃣: The Gallery Filters
 
 In this phase, there are two new implementations:
 
@@ -357,7 +357,7 @@ In this phase, there are two new implementations:
   * Film stock
   * Camera
 
-### Implementation
+### Implement the basic filters
 
 Step 1 - Modify the `getPhotos()` function in `utils/actions.ts` and test with arbiterary values in `gallery/page.tsx`.
 
@@ -387,3 +387,57 @@ Step 3 - `app/gallery/page.tsx`
   * Otherwise, add it into the checked list.
 * Install `@headlessui/react`, study it and use its `Listbox` to build the filters.
 * Add a button to reset each filter.
+* Style accordingly with Tailwind CSS.
+
+### Implement Query String to Filters
+
+Query string, also known as URL parameters, refers to the extra strings appended to the base URL of the page, such that the URL carries parameters that can be read.
+
+Example: `https://.../gallery?film_stocks=1,4&cameras=3`
+
+You might have noticed that:
+
+* When the page is refreshed, all filters are reset.
+* There's no way to have a unique URL for each combination of filters. Which means filter combos are totally unshareable.
+
+We will now fix those problems.
+
+The strategy here:
+
+* Implement the ability to read and interpret the browser URL for parameters of the filters, which are passed into `getPhotos()`.
+* Manually enter the URLs to test and confirm that it works.
+* Then, implement the ability of the filters UI to alter the URL, such that the filters' settings are always reflected on the URL.
+* Last but not least, the component re-renders each time a filter is changed.
+
+1 of 3: Ability to read and interpret the browser URL for filters' parameters
+
+* This must be the very first thing that runs right after `setHasMounted(false);` in `useEffect`.
+* Study how to search and assign the URL parameters using `URLSearchParams()`, and how to read and process each parameter.
+* Each parameter's value is like `"1,2,3"`, which is a string separated by commas. So, they must be converted into `[1,2,3]` to be understood/accepted by the filters and `getPhotos`.
+* After each filter's parameter is read, they must be stored and then immediately:
+  * used to set (update) the filters.
+  * passed into `getPhotos.`
+* Study this: Why can't we set the filters first and then pass the filters into `getPhotos` instead of using the parameters?
+* Manually enter the URLs to test and confirm that they work. Use `,` for multiple options so that the URL is much shorter and readable.
+
+2 of 3: Ability to modify (add, delete, clear) the URL parameters.
+
+* This must be created as a function which is passed into the `onChange` of `Listbox`.
+* This function needs to take 2 inputs: the name of the filter that's changed, and the latest state of that filter.
+* What the function does sequentially:
+  * Read the current URL parameters
+  * Reset the filter by clearing all of its parameters
+  * Use the latest state of the filter to assign its new parameters
+  * Update the URL in the background using `useRouter` (related to the next step)
+
+3 of 3: Re-render the component upon filter change
+
+* From `next/navigation`, import these 3 modules:
+  * `useRouter`: Changes the URL
+  * `useSearchParams`: Reads the URL parameters
+  * `usePathname`: Reads the URL
+* Assign them to individual constants anywhere before `useEffect`.
+* Use `useRouter` to change the URL with the help of `usePathname` at the end of the function in Step 2.
+* Assign `useSearchParams` as the only dependency of `useEffect`, so that: `Filter changes > URL parameter changes > Component re-renders`
+
+Now that we're done, don't forget to add the appropriate filters' URLs to the `Home` page's preview photos!
