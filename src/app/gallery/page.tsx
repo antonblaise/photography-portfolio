@@ -149,8 +149,6 @@ export default function GalleryPage() {
                 GALLERY
             </h1>
 
-            
-
             <div className="flex flex-col md:flex-row items-center justify-center space-y-[5%] md:space-x-[40%] md:space-y-0 py-5 md:p-10">
                 {
                     filters.map((filter) => (
@@ -170,7 +168,7 @@ export default function GalleryPage() {
                                     filter.state.length > 0
                                     &&
                                     <span 
-                                        className="mx-2 bg-black text-white dark:bg-white dark:text-black text-xs scale-80 md:scale-100 px-2 py-0.5 rounded-full">
+                                        className="mx-2 bg-black text-white select-none dark:bg-white dark:text-black text-xs scale-80 md:scale-100 px-2 py-0.5 rounded-full">
                                         {filter.state.length}
                                     </span>
                                 }

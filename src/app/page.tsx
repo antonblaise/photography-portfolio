@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import "@/utils/animations"
 import { fadeInAnimation } from "@/utils/animations";
 
@@ -21,22 +22,27 @@ export default function HomePage() {
     {
       src: "v1777867480/2604010007__notuny.jpg",
       caption: "Kodak Gold 200 120",
+      film_stock: "5",
     },
     {
       src: "v1777133886/A010371-R1-29-29_um3qer.jpg",
       caption: "Kodak Colorplus 200",
+      film_stock: "1",
     },
     {
       src: "v1778675701/A010158-R1-21-20_rtzv2k.jpg",
       caption: "Kodak Ultramax 400",
+      film_stock: "3",
     },
     {
       src: "v1778675602/2603040003__upvch5.jpg",
       caption: "Fomapan 200",
+      film_stock: "4",
     },
     {
       src: "v1778676498/A007008-R1-13-12_uyzgok.jpg",
       caption: "Kodak Gold 200",
+      film_stock: "2",
     },
     {
       caption: "And more.",
@@ -79,10 +85,17 @@ export default function HomePage() {
               }
             }
           >
-            {item.src && <img
-              src={`${cloudinaryUrlPrefix}/${item.src}`}
-              className="aspect-[2/3] object-cover md:hover:opacity-60 duration-200"
-            />}
+            {
+              item.src && 
+              <Link
+                href={`/gallery?film_stocks=${item.film_stock}`}
+              >
+                <img
+                  src={`${cloudinaryUrlPrefix}/${item.src}`}
+                  className="aspect-[2/3] object-cover md:hover:opacity-60 duration-200"
+                />
+              </Link>
+            }
             <p>{item.caption}</p>
           </div>
         ))}
