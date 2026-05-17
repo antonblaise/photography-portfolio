@@ -205,7 +205,8 @@ export default function GalleryPage() {
                                                 text-xs md:text-sm 
                                                 transition-all ease-out duration-200 
                                                 md:data-[focus]:text-yellow-500 md:data-[focus]:text-xl md:data-[focus]:opacity-100 
-                                                data-[selected]:opacity-100 data-[selected]:font-bold data-[selected]:text-yellow-500 md:data-[selected]:text-white  
+                                                data-[selected]:opacity-100 data-[selected]:font-bold data-[selected]:text-yellow-500 
+                                                md:data-[selected]:text-white md:dark:data-[selected]:text-black   
                                             "
                                         >
                                             <span>{option.name}</span>
