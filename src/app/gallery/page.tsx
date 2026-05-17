@@ -3,7 +3,7 @@
 import { getPhotos, getFilmStocks, getCameras } from '@/utils/actions';
 import { RowsPhotoAlbum } from 'react-photo-album';
 import 'react-photo-album/rows.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import '@/utils/animations';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
@@ -27,7 +27,7 @@ interface Camera {
     format: string;
 }
 
-export default function GalleryPage() {
+function GalleryContent() {
 
     // Utils
     const router = useRouter();
@@ -228,3 +228,11 @@ export default function GalleryPage() {
     );
 
 };
+
+export default function GalleryPage() {
+    return (
+        <Suspense fallback={<div className="text-center py-20 italic text-xs">Loading Gallery...</div>}>
+            <GalleryContent />
+        </Suspense>
+    );
+}
