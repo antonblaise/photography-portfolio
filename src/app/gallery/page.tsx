@@ -2,6 +2,7 @@
 
 import { getPhotos, getFilmStocks, getCameras } from '@/utils/actions';
 import { RowsPhotoAlbum } from 'react-photo-album';
+import Spinner from '@/components/Spinner';
 import 'react-photo-album/rows.css';
 import { useEffect, useState, Suspense } from 'react';
 import '@/utils/animations';
@@ -217,9 +218,7 @@ function GalleryContent() {
                     :
                         <p className="flex max-w-screen justify-center p-20 tracking-widest italic">None</p>
                 ) : (
-                    <div className="flex justify-center pt-50 items-center min-h-[400px]">
-                        <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-gray-800 dark:border-gray-200"></div>
-                    </div>
+                    <Spinner />
                 )
             }
             
