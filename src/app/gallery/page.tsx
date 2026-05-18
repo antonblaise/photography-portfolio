@@ -3,11 +3,11 @@
 import { getPhotos, getFilmStocks, getCameras } from '@/utils/actions';
 import { RowsPhotoAlbum } from 'react-photo-album';
 import Spinner from '@/components/Spinner';
+import Filter from '@/components/Filter';
 import 'react-photo-album/rows.css';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import '@/utils/animations';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation";
 
 interface Photo {
     src: string;
@@ -28,12 +28,11 @@ interface Camera {
     format: string;
 }
 
-function GalleryContent() {
+export default function GalleryPage() {
 
     // Utils
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     // State and data
     const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -64,7 +63,7 @@ function GalleryContent() {
     const [rowHeight, setRowHeight] = useState<number>(250);
     const [spacing, setSpacing] = useState<number>(10);
 
-    // Helper functions
+    // Helper function
     function handleFilterChange(filterName: string, filterState: number[]) {
 
         // 1. Read the current parameters from the URL
@@ -92,25 +91,36 @@ function GalleryContent() {
 
         setHasMounted(false);
 
-        // Get the current URL
+        // ---------- Get parameters from the current URL ----------
+        // URL -> parameters
         const params = new URLSearchParams(window.location.search);
 
-        // Get filter combination from the browser's address bar and set the filter
+
+        // ---------- Get filter combination from the browser's address bar and set the filter ----------
+        // parameters -> number[]
         const filmStocksFilterFromUrl = params.get("film_stocks") ? params.get("film_stocks")!.split(",").map(Number) : [];
         const camerasFilterFromUrl = params.get("cameras") ? params.get("cameras")!.split(",").map(Number) : [];
 
-        // Set the filters
+
+        // ---------- Set the filters ----------
+        // number[] -> filters
         setFilmStocksFilter(filmStocksFilterFromUrl);
         setCamerasFilter(camerasFilterFromUrl);
 
-        // Query Supabase for data from all the tables - film_stocks, cameras, photos
+
+        // ---------- Query Supabase for data from all the tables - film_stocks, cameras, photos ----------
+        // Supabase -> data
         getFilmStocks().then((data) => { setFilmStocks(data) })
         getCameras().then((data) => { setCameras(data) })
 
-        // Directly use the list read from URL instead of the actual filters. 
+
+        // ---------- Directly use the list (number[]) read from URL instead of the actual filters! ----------
         // Because setting state in React is NOT instant.
+        // number[] -> Supabase -> data
         getPhotos(filmStocksFilterFromUrl, camerasFilterFromUrl)
         .then((rawPhotos) => {
+
+            // Format the photos object into something readable by RowsPhotoAlbum.
             const formattedPhotos = rawPhotos.map((p) => (
                 {
                     src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
@@ -137,10 +147,9 @@ function GalleryContent() {
 
         return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
 
-    }, [searchParams]);
+    }, [pathname]);     // Re-render as long as URL changes due to filter parameters change.
 
 
-    
     return (
 
         <main className="p-5 md:p-10">
@@ -150,61 +159,10 @@ function GalleryContent() {
                 GALLERY
             </h1>
 
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-[5%] md:space-x-[40%] md:space-y-0 py-5 md:p-10">
-                {
-                    filters.map((filter) => (
-                        <Listbox key={filter.name} value={filter.state} onChange={(newState) => handleFilterChange(filter.name, newState)} multiple>
-                            <div className="flex flex-row items-center">
-                                <ListboxButton className="flex flex-row items-center">
-                                    <span 
-                                        className="flex flex-row items-center tracking-widest mx-2 md:mx-5 italic text-xs md:text-lg cursor-pointer hover:scale-120 transition-all ease-out duration-200"
-                                    >
-                                        <i
-                                            className="fi fi-rr-menu-burger w-8 h-4 md:w-12 flex items-center justify-center" 
-                                        />
-                                        {filter.name}
-                                    </span>
-                                </ListboxButton>
-                                {
-                                    filter.state.length > 0
-                                    &&
-                                    <span 
-                                        className="mx-2 bg-black text-white select-none dark:bg-white dark:text-black text-xs scale-80 md:scale-100 px-2 py-0.5 rounded-full">
-                                        {filter.state.length}
-                                    </span>
-                                }
-                                {
-                                    filter.state.length > 0
-                                    &&
-                                    <i
-                                        className="flex fi fi-sr-cross-circle opacity-50 md:scale-120 hover:scale-150 mx-2 transition-all ease-out duration-200"
-                                        onClick={() => handleFilterChange(filter.name, [])}
-                                    />
-
-                                }
-                            </div>
-
-                            <ListboxOptions
-                                anchor="bottom start"
-                                className="space-y-2 mt-5"
-                            >
-                                {
-                                    filter.options.map((option) => (
-                                        <ListboxOption
-                                            key={option.id}
-                                            value={option.id}
-                                            className="flex justify-between select-none cursor-pointer opacity-60 italic tracking-widest bg-black text-white dark:bg-white dark:text-black p-2 md:p-5 text-xs md:text-sm transition-all ease-out duration-200 md:hover:text-yellow-500 md:hover:text-xl md:hover:opacity-100 data-[selected]:opacity-100 data-[selected]:font-bold data-[selected]:text-yellow-500 md:data-[selected]:text-white md:dark:data-[selected]:text-black"
-                                        >
-                                            <span>{option.name}</span>
-                                        </ListboxOption>
-                                    ))
-                                }
-
-                            </ListboxOptions>
-                        </Listbox>
-                    ))
-                }
-            </div>
+            <Filter
+                filters={filters}
+                onFilterChange={handleFilterChange}
+            />
 
             { 
                 hasMounted ? 
@@ -227,11 +185,3 @@ function GalleryContent() {
     );
 
 };
-
-export default function GalleryPage() {
-    return (
-        <Suspense fallback={<div className="text-center py-20 italic text-xs">Loading Gallery...</div>}>
-            <GalleryContent />
-        </Suspense>
-    );
-}

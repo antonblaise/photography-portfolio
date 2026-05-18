@@ -407,9 +407,12 @@ The strategy here:
 * Implement the ability to read and interpret the browser URL for parameters of the filters, which are passed into `getPhotos()`.
 * Manually enter the URLs to test and confirm that it works.
 * Then, implement the ability of the filters UI to alter the URL, such that the filters' settings are always reflected on the URL.
-* Last but not least, the component re-renders each time a filter is changed.
+* The component re-renders each time a filter (filter parameter) is changed.
+* Last but not least. migrate the whole filter into a separate component and import it back.
 
-1 of 3: Ability to read and interpret the browser URL for filters' parameters
+#### 1 of 4: Ability to read and interpret the browser URL for filters' parameters
+
+*Main working area: `useEffect`.*
 
 * This must be the very first thing that runs right after `setHasMounted(false);` in `useEffect`.
 * Study how to search and assign the URL parameters using `URLSearchParams()`, and how to read and process each parameter.
@@ -420,7 +423,7 @@ The strategy here:
 * Study this: Why can't we set the filters first and then pass the filters into `getPhotos` instead of using the parameters?
 * Manually enter the URLs to test and confirm that they work. Use `,` for multiple options so that the URL is much shorter and readable.
 
-2 of 3: Ability to modify (add, delete, clear) the URL parameters.
+#### 2 of 4: Ability to modify (add, delete, clear) the URL parameters.
 
 * This must be created as a function which is passed into the `onChange` of `Listbox`.
 * This function needs to take 2 inputs: the name of the filter that's changed, and the latest state of that filter.
@@ -430,14 +433,64 @@ The strategy here:
   * Use the latest state of the filter to assign its new parameters
   * Update the URL in the background using `useRouter` (related to the next step)
 
-3 of 3: Re-render the component upon filter change
+#### 3 of 4: Re-render the component upon filter change
 
-* From `next/navigation`, import these 3 modules:
+* From `next/navigation`, import these 2 modules:
   * `useRouter`: Changes the URL
-  * `useSearchParams`: Reads the URL parameters
   * `usePathname`: Reads the URL
 * Assign them to individual constants anywhere before `useEffect`.
 * Use `useRouter` to change the URL with the help of `usePathname` at the end of the function in Step 2.
-* Assign `useSearchParams` as the only dependency of `useEffect`, so that: `Filter changes > URL parameter changes > Component re-renders`
+* Assign `usePathname` as the only dependency of `useEffect`, so that: `Filter changes > URL changes > Component re-renders`.
 
-Now that we're done, don't forget to add the appropriate filters' URLs to the `Home` page's preview photos!
+#### 4 of 4: Migrate the filters part into a separate file to be imported as a component
+
+This is a good practice of modular design. It keeps the parent component as clean as possible.
+
+* Create a new folder under `app` named `components`.
+* Inside it, create a new file named `Filter.tsx`.
+* On its very top, put the whole line of import from `@headlessui/react`.
+* Name the exported default function as `Filter`. Usually it's named after the `.tsx` file itself.
+* Inside the function's `return`, paste the full `<div></div>` of the filter.
+* Now, we need to define the blueprints of the input property of the function (component), because we can see that the Filter component generates the filter menus using 2 things:
+
+  * A list of filters
+  * A function that runs when the filter menu's state changes
+* In TypeScript, a component only ever receives **one single object** as its input parameter.
+* So, we need to put those 2 dependencies into an object. But first, let's create a blueprint for the input parameter object.
+
+  * name it as `FilterProps`
+  * `filters` of type `FilterMenu[]` which we'll create next
+  * A function named `onFilterChange` that takes 2 input arguments, that returns nothing:
+    * the changed filter's name (string)
+    * the filter's new state (list of numbers)
+* Now, clearly we need to create a blueprint for the type of `filters`. This is where and how the `FIlter` component reads the list of filters handed over by `Gallery` page, the parent.
+
+  * Name it as `FilterMenu`
+  * Only read the `name` (string), `options` (list) and `state` (list) from the `filters` list of `Gallery`, so only define their types inside.
+  * For `options`, since it points further to the interface `FilmStock`, so we need to clearly define which data to read from there. Here, we only need the `id` (number) and `name` (string).
+
+  ```typescript
+  interface FilterMenu {
+      name: string;       // The name of the filter menu
+      options: {          // The selections
+          id: number;
+          name: string;
+      }[];
+      state: number[];    // The state of the filter menu
+  }
+
+  interface FilterProps {
+      filters: FilterMenu[];
+      onFilterChange: (filterName: string, newState: number[]) => void;   // A function with those input arguments, which return nothing.
+  }
+  ```
+* So now, we can pass the input property to the `Filter` component.
+
+  ```typescript
+  export default function Filter( { filters, onFilterChange }: FilterProps ) { ...
+  ```
+* For all the instances where we call the function created in `step 2 of 4`, change it to `onFilterChange`. The input arguments remain the same.
+
+*Extra: Try migrating the spinner to a separate component as well! It's always better to build reusable modules in software development!*
+
+Now that we're done, don't forget to add the respective filters' URLs to the `Home` page's preview photos!
