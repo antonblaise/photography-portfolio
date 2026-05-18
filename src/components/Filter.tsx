@@ -60,18 +60,16 @@ export default function Filter( { filters, onFilterChange }: FilterProps ) {
                         {
                             filter.state.length > 0
                             &&
-                            <span 
-                                className="mx-2 bg-black text-white select-none dark:bg-white dark:text-black text-xs scale-80 md:scale-100 px-2 py-0.5 rounded-full">
-                                {filter.state.length}
-                            </span>
-                        }
-                        {
-                            filter.state.length > 0
-                            &&
-                            <i
-                                className="flex fi fi-sr-cross-circle opacity-50 md:scale-120 hover:scale-150 mx-2 transition-all ease-out duration-200"
-                                onClick={() => onFilterChange(filter.name, [])}
-                            />
+                            <>
+                                <span 
+                                    className="mx-2 bg-black text-white select-none dark:bg-white dark:text-black text-xs scale-80 md:scale-100 px-2 py-0.5 rounded-full">
+                                    {filter.state.length}
+                                </span>
+                                <i
+                                    className="flex fi fi-sr-cross-circle opacity-50 md:scale-120 hover:scale-150 mx-2 transition-all ease-out duration-200"
+                                    onClick={() => onFilterChange(filter.name, [])}
+                                />
+                            </>
                         }
                     </div>
 

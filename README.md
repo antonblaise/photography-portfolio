@@ -356,3 +356,158 @@ In this phase, there are two new implementations:
 
   * Film stock
   * Camera
+
+Meanwhile, we'll also do some code refactoring along the way.
+
+### Create the filters
+
+In `Gallery` page:
+
+* Use `useState` to create constants to store and set the filters' states.
+* Create a list of filter objects with these keys:
+  * `name`: The name of the filter menu to be displayed
+  * `options`: The filter menu's options to be toggled
+  * `state`: The list that stores the filter menu's state (which options are selected)
+  * `setState`: The `useState` function that sets the state of the filter menu
+* By using a list, we can easily generate multiple menus using `.map()` later.
+
+### Create a `Filter` child component
+
+It's a good practice to create reusable modules. Upon deep-diving and testings, I found that a filter menu component is quite a large and complicated one. So it needs to be created as a child component that's imported into the parent component - `Gallery`.
+
+* In `src/app` folder, create a `components` folder.
+* Inside it, create `Filter.tsx`.
+* In the terminal, on the root directory, run `npm install @headlessui/react`.
+* Open `Filter.tsx`, import `Listbox, ListboxButton, ListboxOption, ListboxOptions` from `@headlessui/react`.
+* Export the default function (component) named `Filter`. It's a usual practice to name the component after its filename.
+* This component should:
+
+  * automatically generate an array of same-looking filter menus when given a list of filters.
+  * be able to run the function that handles the filter menus' changes.
+* In React, a component only ever takes in 1 single property (input argument). But here, clearly there are 2 inputs needed - filters and the handler function. Therefore, they must be given as an object.
+* To create the input object, which is the property, we need to create a blueprint (interface) for it.
+
+  ```typescript
+  interface FilterProps {
+      filters: ?;    // What's its type?
+      onFilterChange: (filterName: string, newState: number[]) => void;   // A function with those input arguments, which return nothing.
+  }
+  ```
+* So, what's the filter's type? Based on the `filters` list in `Gallery` page, we need to create another interface for `filters`. Let's name it `FilterMenu`.
+
+  ```typescript
+  interface FilterMenu {
+      name: string;       // The name of the filter menu
+      options: {          // The selections
+          id: number;
+          name: string;
+      }[];
+      state: number[];    // The state of the filter menu
+  }
+  ```
+* Now, the `FilterProps` interface should look like this:
+
+  ```typescript
+  interface FilterProps {
+      filters: FilterMenu[];
+      onFilterChange: (filterName: string, newState: number[]) => void;   // A function with those input arguments, which return nothing.
+  }
+  ```
+
+  Because `filters` is a list of objects of type `FilterMenu`.
+* Now, the component function should be created like this:
+
+  ```typescript
+  export default function Filter( { filters, onFilterChange }: FilterProps ) { ... }
+  ```
+
+  We clearly specify that the property is of type `FilterProps`.
+* Now, in its `return`, use `filters.map((filter) => ... )` to loop through all filters given. Inside it, we'll use `<Listbox>` to create the filter menu.
+
+  ```typescript
+  <Listbox key={filter.name} value={filter.state} onChange={(newState) => onFilterChange(filter.name, newState)} multiple>
+      <ListboxButton>
+          (The name of the filter menu)
+      </ListboxButton>
+      <ListboxOptions>
+          (The options of the filter menu)
+      </ListboxOptions>
+  </Listbox>
+  ```
+
+  `multiple` means to enable multiple selections. Otherwise only one option can be selected at a time.
+* Below `Listbox`, when the filter's state length is greater than zero, meaning when there's 1 or more options selected, show a Fragment (`<> </>`) that wraps 2 things:
+
+  * The filter's state length, which is the number of options selected.
+  * An 'X' icon to clear/reset the filter.
+* Use `<div>` and Tailwind CSS to order and style them accordingly.
+* Extra: Create a `Spinner` component in the  same way. We can show the spinner when something is loading, like the photo album.
+
+### Gallery page flow
+
+Go back to Gallery's `page.tsx`. We will now design and configure the flow of this page.
+
+First of all, before we begin:
+
+* Add `Suspense` and `useMemo` to the imports from 'react'.
+* Import `useSearchParams` from `'next/navigation'`.
+* Rename the main component from `GalleryPage` to `GalleryContent`, and do not export it.
+* Then, create a new `GalleryPage` component and export it.
+* In the `return` section, wrap `GalleryContent` component in `<Suspense> </Suspense>`. Because the `useSearchParams` from `'next/navigation'` must exist inside Suspense.
+* Import `Filter` and `Spinner` components from `components` folder accordingly.
+
+Now we can begin. This is the flow plan of `functionGalleryContent()`:
+
+```plaintext
+Define constants ← useState
+    ↓
+Define filters list
+    ↓
+Filter photos ← useMemo ← photos, filmStocksFilter, camerasFilter
+    ↓
+Set filters from URL params ← useEffect ← useSearchParams
+    ↓
+Set RowsPhotoAlbum specs ← useEffect
+    ↓
+Load data from Supabase ← useEffect
+    ↓
+Define function to handle filter change
+    ↓
+Return the UI TSX
+```
+
+* Delete the `Photo` interface, as we don't need it anymore.
+* Change the type of `photos` state from `Photo[]` to `any[]`, because we just want to accept the raw photos data that's fetched by `getPhotos` of `actions.ts`, regardless of its blueprint.
+
+  ```typescript
+  const [photos, setPhotos] = useState<any[]>([]);
+  ```
+* Define a new constant to store `useSearchParams()`.
+* Right after the `filters` list, create a constant to store the list of filtered and formatted photos, returned by `useMemo()`. Inside `useMemo()`:
+
+  * Create a variable using `let` named `result` to store the filter result.
+  * Apply film stocks and cameras filters using `.filter()` if each filter's length is greater than 0.
+  * Map the result into the format readable by `RowsPhotoAlbum`, exactly the same as our `Photo` interface previously.
+
+    ```typescript
+    return result.map((p) => ({
+        src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
+        width: p.width,
+        height: p.height,
+        alt: p.title || "photo"
+    }));
+    ```
+  * Dependencies: `photos`, `filmStocksFilter`, `camerasFilter`
+* Create a `useEffect` to update the filters' states using the URL parameters.
+
+  ```plaintext
+  URL → parameters → number[] → filters
+  ```
+  * Create a constant named `params` to read and store the current URL parameters.
+
+    ```typescript
+    const params = new URLSearchParams(searchParams.toString());
+    ```
+  * Create constants of type numbers list to store the parameters of each filter.
+  * Set the filters using those lists.
+  * Dependency: `searchParams`

@@ -23,7 +23,6 @@ interface Camera {
 
 function GalleryContent() {
 
-
     // ---------------------------- Data ----------------------------
     const [hasMounted, setHasMounted] = useState<boolean>(false);
     const [photos, setPhotos] = useState<any[]>([]);
@@ -81,7 +80,7 @@ function GalleryContent() {
     useEffect(() => {
 
         // URL -> parameters
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(searchParams.toString());
 
         // parameters -> number[]
         const filmStocksFilterFromUrl = params.get("film_stocks") ? params.get("film_stocks")!.split(",").map(Number).filter(Boolean) : [];
