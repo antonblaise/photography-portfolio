@@ -161,8 +161,8 @@ function GalleryContent() {
             }
         });
 
-        // 5. Update the browser's address seamlessly in the background
-        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+        // 5. Update the browser's address
+        window.history.pushState(null, '', `${pathname}?${params.toString()}`);
     }
 
 
