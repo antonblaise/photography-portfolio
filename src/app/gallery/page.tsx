@@ -5,7 +5,7 @@ import { RowsPhotoAlbum } from 'react-photo-album';
 import Spinner from '@/components/Spinner';
 import Filter from '@/components/Filter';
 import 'react-photo-album/rows.css';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useMemo, use } from 'react';
 import '@/utils/animations';
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
@@ -30,18 +30,18 @@ interface Camera {
 
 function GalleryContent() {
 
-    // Utils
+    // ---------------------------- Utils ----------------------------
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    // State and data
+    // ---------------------------- Data ----------------------------
     const [hasMounted, setHasMounted] = useState<boolean>(false);
-    const [photos, setPhotos] = useState<Photo[]>([]);
+    const [photos, setPhotos] = useState<any[]>([]);
     const [filmStocks, setFilmStocks] = useState<FilmStock[]>([]);
     const [cameras, setCameras] = useState<Camera[]>([]);
 
-    // Filters
+    // ---------------------------- Filters ----------------------------
     const [filmStocksFilter, setFilmStocksFilter] = useState<number[]>([]);
     const [camerasFilter, setCamerasFilter] = useState<number[]>([]);
 
@@ -60,12 +60,90 @@ function GalleryContent() {
         }
     ];
 
-    // RowsPhotoAlbum specs
+    const filteredPhotos = useMemo(() => {
+        let result = photos;
+
+        // Apply film stocks filter
+        if (filmStocksFilter.length > 0) {
+            result = result.filter((p) => 
+                p.film_stock_id && filmStocksFilter.includes(p.film_stock_id)
+            );
+        }
+
+        // Apply cameras filter
+        if (camerasFilter.length > 0) {
+            result = result.filter((p) => 
+                p.camera_id && camerasFilter.includes(p.camera_id)
+            );
+        }
+
+        // Output the photos into a format readable by RowsPhotoAlbum
+        return result.map((p) => ({
+            src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
+            width: p.width,
+            height: p.height,
+            alt: p.title || "photo"
+        }));
+
+    }, [photos, filmStocksFilter, camerasFilter])   // Reruns if any of these changes
+
+    // Sync URL parameters to filter state
+    useEffect(() => {
+
+        // URL -> parameters
+        const params = new URLSearchParams(window.location.search);
+
+        // parameters -> number[]
+        const filmStocksFilterFromUrl = params.get("film_stocks") ? params.get("film_stocks")!.split(",").map(Number).filter(Boolean) : [];
+        const camerasFilterFromUrl = params.get("cameras") ? params.get("cameras")!.split(",").map(Number).filter(Boolean) : [];
+
+        // number[] -> filters
+        setFilmStocksFilter(filmStocksFilterFromUrl);
+        setCamerasFilter(camerasFilterFromUrl);
+
+    }, [searchParams]);
+
+    // ---------------------------- RowsPhotoAlbum specs ----------------------------
     const [rowHeight, setRowHeight] = useState<number>(250);
     const [spacing, setSpacing] = useState<number>(10);
 
-    // Helper function
-    function handleFilterChange(filterName: string, filterState: number[]) {
+    useEffect(() => {
+        const updateRowHeightAndSpacing = () => {
+            setRowHeight(window.innerWidth >= 768 ? 250 : 150);
+            setSpacing(window.innerWidth >= 768 ? 10 : 5);
+        };
+
+        updateRowHeightAndSpacing();
+
+        window.addEventListener('resize', updateRowHeightAndSpacing);
+
+        return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
+    }, []);
+
+    // ---------------------------- Load data from Supabase ----------------------------
+    useEffect(() => {
+
+        const loadData = async () => {
+            const [rawPhotos, rawFilmStocks, rawCameras] = await Promise.all(
+                [
+                    getPhotos(),
+                    getFilmStocks(),
+                    getCameras()
+                ]
+            )
+
+            setPhotos(rawPhotos || []);
+            setFilmStocks(rawFilmStocks || []);
+            setCameras(rawCameras || []);
+        };
+
+        loadData();
+        setHasMounted(true);
+
+    }, []);
+
+    // ---------------------------- Helper function ----------------------------
+    const handleFilterChange = (filterName: string, filterState: number[]) => {
 
         // 1. Read the current parameters from the URL
         const params = new URLSearchParams(window.location.search);
@@ -81,7 +159,7 @@ function GalleryContent() {
 
         // 4. Set the filter
         filters.forEach((filter) => {
-            if (filter.name == filterName) {
+            if (filter.name === filterName) {
                 filter.setState(filterState);
             }
         });
@@ -90,67 +168,6 @@ function GalleryContent() {
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
     }
 
-    useEffect(() => {
-
-        setHasMounted(false);
-
-        // ---------- Get parameters from the current URL ----------
-        // URL -> parameters
-        const params = new URLSearchParams(window.location.search);
-
-
-        // ---------- Get filter combination from the browser's address bar and set the filter ----------
-        // parameters -> number[]
-        const filmStocksFilterFromUrl = params.get("film_stocks") ? params.get("film_stocks")!.split(",").map(Number) : [];
-        const camerasFilterFromUrl = params.get("cameras") ? params.get("cameras")!.split(",").map(Number) : [];
-
-
-        // ---------- Set the filters ----------
-        // number[] -> filters
-        setFilmStocksFilter(filmStocksFilterFromUrl);
-        setCamerasFilter(camerasFilterFromUrl);
-
-
-        // ---------- Query Supabase for data from all the tables - film_stocks, cameras, photos ----------
-        // Supabase -> data
-        getFilmStocks().then((data) => { setFilmStocks(data) })
-        getCameras().then((data) => { setCameras(data) })
-
-
-        // ---------- Directly use the list (number[]) read from URL instead of the actual filters! ----------
-        // Because setting state in React is NOT instant.
-        // number[] -> Supabase -> data
-        getPhotos(filmStocksFilterFromUrl, camerasFilterFromUrl)
-        .then((rawPhotos) => {
-
-            // Format the photos object into something readable by RowsPhotoAlbum.
-            const formattedPhotos = rawPhotos.map((p) => (
-                {
-                    src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
-                    width: p.width,
-                    height: p.height,
-                    alt: p.title || "photo"
-                }
-            ));
-
-            setPhotos(formattedPhotos);
-
-            // Only raise the flag when all photos have indeed been loaded.
-            setHasMounted(true);
-        });
-
-        const updateRowHeightAndSpacing = () => {
-            setRowHeight(window.innerWidth >= 768 ? 250 : 150);
-            setSpacing(window.innerWidth >= 768 ? 10 : 5);
-        };
-
-        updateRowHeightAndSpacing();
-
-        window.addEventListener('resize', updateRowHeightAndSpacing);
-
-        return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
-
-    }, [searchParams]);
 
 
     return (
@@ -172,7 +189,7 @@ function GalleryContent() {
                 (
                     photos.length > 0 ?
                         <RowsPhotoAlbum
-                            photos={photos}
+                            photos={filteredPhotos}
                             targetRowHeight={rowHeight}
                             spacing={spacing}
                         />

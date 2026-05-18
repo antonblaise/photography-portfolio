@@ -9,9 +9,11 @@ interface Photo {
     cameras: {
         name: string;
     } | null;       // Null for when data fails to load
+    camera_id: number;
     film_stocks: {
         name: string;
     } | null;       // Null for when data fails to load
+    film_stocks_id: number;
     is_digital: boolean;
     date: string;
     width: number;
@@ -30,10 +32,7 @@ interface Camera {
     format: string;
 }
 
-export async function getPhotos(
-    filmStockIds: number[],
-    cameraIds: number[],
-): Promise<Photo[]> {
+export async function getPhotos(): Promise<Photo[]> {
 
     // Build the base query
     let query = supabase
@@ -43,25 +42,17 @@ export async function getPhotos(
             title,
             image_url,
             cameras ( name ),
+            camera_id,
             film_stocks ( name ),
+            film_stock_id,
             is_digital,
             date,
             width,
             height
         `)
-        .order('date', { ascending: false });
-
-    // Apply filters
-    if (filmStockIds.length > 0) {
-        query = query.in('film_stock_id', filmStockIds)
-    }
-
-    if (cameraIds.length > 0) {
-        query = query.in('camera_id', cameraIds)
-    }
 
     // Apply sorting
-    query = query.order('date', { ascending: true })
+    query = query.order('date', { ascending: false })
 
     // Run the query
     const { data, error } = await query;

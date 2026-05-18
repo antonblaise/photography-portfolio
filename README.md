@@ -505,3 +505,14 @@ We use `useSearchParams`, which must exist inside `<Suspense>`. So now, we must 
 * In the Suspense component, assign our Spinner component as its `fallback`.
 
 Now that we're done, don't forget to add the respective filters' URLs to the `Home` page's preview photos!
+
+### Further Enhancements
+
+For now, the Gallery page and filters work well. However, there are 2 major problems that remain:
+
+* When the URL contains filter parameters, and the page is refreshed, any changes in any filter will no longer work at all.
+* Every time any filter's state changes, Supabase is queried.
+
+The fix:
+
+...
