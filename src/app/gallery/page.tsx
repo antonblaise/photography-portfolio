@@ -5,16 +5,8 @@ import { RowsPhotoAlbum } from 'react-photo-album';
 import Spinner from '@/components/Spinner';
 import Filter from '@/components/Filter';
 import 'react-photo-album/rows.css';
-import { useEffect, useState, Suspense, useMemo, use } from 'react';
+import { useEffect, useState, Suspense, useMemo } from 'react';
 import '@/utils/animations';
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-
-interface Photo {
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-}
 
 interface FilmStock {
     id: number;
@@ -30,10 +22,6 @@ interface Camera {
 
 function GalleryContent() {
 
-    // ---------------------------- Utils ----------------------------
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     // ---------------------------- Data ----------------------------
     const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -101,7 +89,7 @@ function GalleryContent() {
         setFilmStocksFilter(filmStocksFilterFromUrl);
         setCamerasFilter(camerasFilterFromUrl);
 
-    }, [searchParams]);
+    }, [new URLSearchParams(window.location.search)]);
 
     // ---------------------------- RowsPhotoAlbum specs ----------------------------
     const [rowHeight, setRowHeight] = useState<number>(250);
@@ -143,7 +131,7 @@ function GalleryContent() {
     const handleFilterChange = (filterName: string, filterState: number[]) => {
 
         // 1. Read the current parameters from the URL
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(window.location.search);
 
         // 2. Reset that filter's URL parameter
         const filterParamName = filterName.toLowerCase().replace(" ", "_");
@@ -162,7 +150,7 @@ function GalleryContent() {
         });
 
         // 5. Update the browser's address
-        window.history.pushState(null, '', `${pathname}?${params.toString()}`);
+        window.history.pushState(null, '', `${window.location.pathname}?${params.toString()}`);
     }
 
 
