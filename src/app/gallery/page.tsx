@@ -143,7 +143,7 @@ function GalleryContent() {
     const handleFilterChange = (filterName: string, filterState: number[]) => {
 
         // 1. Read the current parameters from the URL
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(searchParams.toString());
 
         // 2. Reset that filter's URL parameter
         const filterParamName = filterName.toLowerCase().replace(" ", "_");
@@ -184,7 +184,7 @@ function GalleryContent() {
             { 
                 hasMounted ? 
                 (
-                    photos.length > 0 ?
+                    filteredPhotos.length > 0 ?
                         <RowsPhotoAlbum
                             photos={filteredPhotos}
                             targetRowHeight={rowHeight}
