@@ -5,9 +5,9 @@ import { RowsPhotoAlbum } from 'react-photo-album';
 import Spinner from '@/components/Spinner';
 import Filter from '@/components/Filter';
 import 'react-photo-album/rows.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import '@/utils/animations';
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface Photo {
     src: string;
@@ -28,11 +28,12 @@ interface Camera {
     format: string;
 }
 
-export default function GalleryPage() {
+function GalleryContent() {
 
     // Utils
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     // State and data
     const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -147,7 +148,7 @@ export default function GalleryPage() {
 
         return () => window.removeEventListener('resize', updateRowHeightAndSpacing);
 
-    }, [pathname]);     // Re-render as long as URL changes due to filter parameters change.
+    }, [searchParams]);
 
 
     return (
@@ -185,3 +186,11 @@ export default function GalleryPage() {
     );
 
 };
+
+export default function GalleryPage() {
+    return (
+        <Suspense fallback={<Spinner />}>
+            <GalleryContent />
+        </Suspense>
+    )
+}
