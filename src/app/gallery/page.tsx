@@ -74,8 +74,10 @@ function GalleryContent() {
         const filterParamName = filterName.toLowerCase().replace(" ", "_");
         params.delete(filterParamName);
 
-        // 3. Assign the filter's new URL parameter based on the given state
-        params.append(filterParamName, filterState.map(String).join(","));
+        // 3. Assign the filter's new URL parameter based on the given state only if it's not empty
+        if (filterState.length > 0) {
+            params.append(filterParamName, filterState.map(String).join(","));
+        }
 
         // 4. Set the filter
         filters.forEach((filter) => {
