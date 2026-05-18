@@ -1,12 +1,13 @@
 'use client';
 
 import { getPhotos, getFilmStocks, getCameras } from '@/utils/actions';
-import { RowsPhotoAlbum } from 'react-photo-album';
+import '@/utils/animations';
 import Spinner from '@/components/Spinner';
 import Filter from '@/components/Filter';
+import { RowsPhotoAlbum } from 'react-photo-album';
 import 'react-photo-album/rows.css';
 import { useEffect, useState, Suspense, useMemo } from 'react';
-import '@/utils/animations';
+import { useSearchParams } from 'next/navigation';
 
 interface FilmStock {
     id: number;
@@ -28,6 +29,7 @@ function GalleryContent() {
     const [photos, setPhotos] = useState<any[]>([]);
     const [filmStocks, setFilmStocks] = useState<FilmStock[]>([]);
     const [cameras, setCameras] = useState<Camera[]>([]);
+    const searchParams = useSearchParams();
 
     // ---------------------------- Filters ----------------------------
     const [filmStocksFilter, setFilmStocksFilter] = useState<number[]>([]);
@@ -89,7 +91,7 @@ function GalleryContent() {
         setFilmStocksFilter(filmStocksFilterFromUrl);
         setCamerasFilter(camerasFilterFromUrl);
 
-    }, [new URLSearchParams(window.location.search)]);
+    }, [searchParams]);
 
     // ---------------------------- RowsPhotoAlbum specs ----------------------------
     const [rowHeight, setRowHeight] = useState<number>(250);
