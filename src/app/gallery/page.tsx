@@ -123,22 +123,19 @@ function GalleryContent() {
     // ---------------------------- Load data from Supabase ----------------------------
     useEffect(() => {
 
-        const loadData = async () => {
-            const [rawPhotos, rawFilmStocks, rawCameras] = await Promise.all(
-                [
-                    getPhotos(),
-                    getFilmStocks(),
-                    getCameras()
-                ]
-            )
-
+        Promise.all([
+            getPhotos(), // Fetches all photos without conditions
+            getFilmStocks(),
+            getCameras()
+        ]).then(([rawPhotos, rawFilmStocks, rawCameras]) => {
             setPhotos(rawPhotos || []);
             setFilmStocks(rawFilmStocks || []);
             setCameras(rawCameras || []);
-        };
-
-        loadData();
-        setHasMounted(true);
+            setHasMounted(true);
+        }).catch((err) => {
+            console.error("Failed downloading items from Supabase:", err);
+            setHasMounted(true);
+        });
 
     }, []);
 
