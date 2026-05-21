@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           md:justify-end
 
           /* Hover effects */
-          [&>a]:hover:text-gray-400
+          [&>a]:hover:opacity-50
           [&>a]:hover:duration-500
 
           /* Expand clickable region */

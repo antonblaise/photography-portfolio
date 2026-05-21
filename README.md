@@ -132,7 +132,73 @@ In `utils` folder, create another `.ts` file named `actions.ts`.
 
 For all the actions that the webpage does, they'll be defined in this file. For example, pulling data from Supabase, filtering, sorting, viewing, searching, calculating, etc.
 
-First, import the `supabase` client that we created. Create am object blueprint (interface) named `Photo `to specify the type of each column's data from the Supabase `photos` table. Then, create and export an asynchronous function to get photos using Supabase client into an array.
+First, import the `supabase` client that we created.
+
+* Create an object blueprint (interface) named `Photo` to specify the type of each column's data from the Supabase `photos` table.
+
+  ```typescript
+  interface Photo {
+      id: number;
+      title: string | null;
+      image_url: string;
+      cameras: {
+          name: string;
+      } | null;       // Null for when data fails to load
+      camera_id: number;
+      film_stocks: {
+          name: string;
+      } | null;       // Null for when data fails to load
+      film_stocks_id: number;
+      is_digital: boolean;
+      date: string;
+      width: number;
+      height: number;
+  }
+  ```
+* Then, create and export an asynchronous function to get photos using Supabase client into an array.
+
+  ```typescript
+  export async function getPhotos(): Promise<Photo[]> {
+
+      // Build the base query
+      let query = supabase
+          .from('photos')
+          .select(`
+              id,
+              title,
+              image_url,
+              cameras ( name ),
+              camera_id,
+              film_stocks ( name ),
+              film_stock_id,
+              is_digital,
+              date,
+              width,
+              height
+          `)
+
+      // Apply sorting
+      query = query.order('date', { ascending: false })
+
+      // Run the query
+      const { data, error } = await query;
+
+      if (error) {
+          console.error(error);
+          return [];
+      }
+
+      // Map the data onto a list of Photo type
+      return (data as any) as Photo[];
+  }
+  ```
+
+Homework:
+
+* Create interfaces for film stocks and cameras.
+* Create async functions to get all film stocks and all cameras respectively.
+* Create another async function to get only one single photo based on the given ID. This will be used when we create the individual page for each photo clicked.
+* [Advanced] `return (data as any) ...` is not a good practice. Find out why and how to fix it.
 
 ### Allow Cloudinary in Next
 
@@ -487,22 +553,14 @@ Return the UI TSX
 
   * Create a variable using `let` named `result` to store the filter result.
   * Apply film stocks and cameras filters using `.filter()` if each filter's length is greater than 0.
-  * Map the result into the format readable by `RowsPhotoAlbum`, exactly the same as our `Photo` interface previously.
-
-    ```typescript
-    return result.map((p) => ({
-        src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
-        width: p.width,
-        height: p.height,
-        alt: p.title || "photo"
-    }));
-    ```
+  * Return the result.
   * Dependencies: `photos`, `filmStocksFilter`, `camerasFilter`
 * Create a `useEffect` to update the filters' states using the URL parameters.
 
   ```plaintext
   URL → parameters → number[] → filters
   ```
+
   * Create a constant named `params` to read and store the current URL parameters.
 
     ```typescript
@@ -536,14 +594,36 @@ Return the UI TSX
       ↓
   Update the browser's URL
   ```
+
   * Let's name it `handleFilterChange`, and the input arguments are (as they must be) exactly the same as those of `onFilterChange` of the `Filter` child component. Because this is exactly the function that we pass to it.
   * Read the parameters from the browser's current URL using `URLSearchParams` and assign it to a constant named `params`.
   * Convert the filter name to all lowercase, and replace all spaces with `_`. Assign the result into another constant. Let's name it `filterParamName`.
   * Delete `filterParamName` from `params`. This clears all the parameters of that filter, which means it is reset.
   * Then, if the given `filterState` has length greater than 0, append the filter name and state to `params`.
   * Set the state of the correct filter from the `filters` list with the `filterState`. Tip: To avoid using multiple `if-else`, use `forEach()` to help target the right filter.
-  * Build the latest URL: `base URL without params + the latest params converted to string`. Then, push it as the latest entry of the browser's history stack using `window.history.pushState`. That's the page that's shown on the browser.
+  * Build the latest URL: `base URL without params + the latest params converted to string`. Then, push it as the latest entry of the browser's history stack using `window.history.pushState`.
 
     ```typescript
-    window.history.pushState(null, '', `${window.location.pathname}?${params.toString()}`
+    window.history.pushState(null, '', `${window.location.pathname}?${params.toString()}`);
     ```
+  * In this way, we do not refresh the page like when we use `router.push()`. Also, it's because when we use `router.push()`, the filter URL becomes unchangeable after refresh, although the filters still work. Then no matter how we change the filter, we will always return to the persistent filter URL when the page is refreshed.
+  * In short:
+
+    * use `window.history.pushState()` if you don't want refresh.
+    * otherwise, use `router.push()`.
+* Last but not least, in the `return` section, in `RowsPhotoAlbum `, map the `filteredPhotos` to the format that it can read, exactly as our `Photo` interface previously.
+
+  ```typescript
+  <RowsPhotoAlbum
+      photos={filteredPhotos.map((p) => ({
+              src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
+              width: p.width,
+              height: p.height,
+              alt: p.title || "photo"
+          }))}
+      targetRowHeight={rowHeight}
+      spacing={spacing}
+  />
+  ```
+
+## Phase 7️⃣: Clickable Gallery Photos

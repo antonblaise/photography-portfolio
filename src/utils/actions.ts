@@ -13,7 +13,7 @@ interface Photo {
     film_stocks: {
         name: string;
     } | null;       // Null for when data fails to load
-    film_stocks_id: number;
+    film_stock_id: number;
     is_digital: boolean;
     date: string;
     width: number;
@@ -94,4 +94,28 @@ export async function getCameras(): Promise<Camera[]> {
     }
 
     return (data as any) as Camera[];
+}
+
+export async function getSinglePhoto(id: number): Promise<Photo | null> {
+    const { data, error } = await supabase
+        .from('photos')
+        .select(`
+            id,
+            title,
+            image_url,
+            cameras ( name ),
+            camera_id,
+            film_stocks ( name ),
+            film_stock_id,
+            date
+        `)
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.log(error);
+        return null;
+    }
+
+    return (data as any) as Photo;
 }

@@ -7,7 +7,7 @@ import Filter from '@/components/Filter';
 import { RowsPhotoAlbum } from 'react-photo-album';
 import 'react-photo-album/rows.css';
 import { useEffect, useState, Suspense, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FilmStock {
     id: number;
@@ -29,6 +29,7 @@ function GalleryContent() {
     const [filmStocks, setFilmStocks] = useState<FilmStock[]>([]);
     const [cameras, setCameras] = useState<Camera[]>([]);
     const searchParams = useSearchParams();
+    const router = useRouter();
 
     // ---------------------------- Filters ----------------------------
     const [filmStocksFilter, setFilmStocksFilter] = useState<number[]>([]);
@@ -66,13 +67,8 @@ function GalleryContent() {
             );
         }
 
-        // Output the photos into a format readable by RowsPhotoAlbum
-        return result.map((p) => ({
-            src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
-            width: p.width,
-            height: p.height,
-            alt: p.title || "photo"
-        }));
+        // Output the filtered photos 
+        return result;
 
     }, [photos, filmStocksFilter, camerasFilter])   // Reruns if any of these changes
 
@@ -175,9 +171,18 @@ function GalleryContent() {
                 (
                     filteredPhotos.length > 0 ?
                         <RowsPhotoAlbum
-                            photos={filteredPhotos}
+                            photos={filteredPhotos.map((p) => ({
+                                    src: p.image_url.replace("/upload", "/upload/f_auto,q_auto,w_800"),
+                                    width: p.width,
+                                    height: p.height,
+                                    alt: p.title || "photo"
+                                }))}
                             targetRowHeight={rowHeight}
                             spacing={spacing}
+                            onClick={({ index }) => {
+                                const clickedPhoto = filteredPhotos[index];
+                                router.push(`/gallery/${clickedPhoto.id}`);
+                            }}
                         />
                     :
                         <p className="flex max-w-screen justify-center p-20 tracking-widest italic">None</p>
