@@ -453,7 +453,7 @@ First of all, before we begin:
 * Import `useSearchParams` from `'next/navigation'`.
 * Rename the main component from `GalleryPage` to `GalleryContent`, and do not export it.
 * Then, create a new `GalleryPage` component and export it.
-* In the `return` section, wrap `GalleryContent` component in `<Suspense> </Suspense>`. Because the `useSearchParams` from `'next/navigation'` must exist inside Suspense.
+* In the `return` section, wrap `GalleryContent` component in `<Suspense> </Suspense>`. Because the `useSearchParams` from `'next/navigation'` **MUST exist inside Suspense**.
 * Import `Filter` and `Spinner` components from `components` folder accordingly.
 
 Now we can begin. This is the flow plan of `functionGalleryContent()`:
@@ -511,3 +511,39 @@ Return the UI TSX
   * Create constants of type numbers list to store the parameters of each filter.
   * Set the filters using those lists.
   * Dependency: `searchParams`
+* Now, put the `RowsPhotoAlbum` specs, where we define the row height and spacing, right after the previous `useEffect`.
+* Create a new `useEffect` right after it.
+
+  * Inside this `useEffect `, put the parts starting from defining the arrow function to update row height and spacing, until the `return `statement, where we run an arrow function with `window.removeEventListener`.
+  * It has no dependency.
+* Now, create next `useEffect`. Here, we'll load data from Supabase and set their constants.
+
+  * Unlike before, where we run each `action` individually, we'll now use `Promise.all()`.
+  * Gather all those 3 actions - `getPhotos`, `getFilmStocks` and `getCameras`, into a list, no need to assign to any constant/variable.
+  * Pass it into `Promise.all()`. In `.then()`, treat the outputs as a list of 3 variables as well.
+  * Run an arrow function to set each variable - `photos`, `filmStocks` and `cameras`.
+  * Set `hasMounted` as `true` right after.
+  * Append a simple `.catch()` to catch the error and print an error message. Also set `hasMounted` as `true` right after it.
+  * It's important to note that we must **NOT** put `setHasMounted(true)` outside of `Promise`, because this will then mean it **doesn't** wait for the async functions before setting `hasMounted` as `true`.
+* Create a helper function as a constant arrow function right after the previous `useEffect`. This is the flow of the function:
+
+  ```plaintext
+  Read the given filter name and its state
+      ↓
+  URL → parameters → delete all
+      ↓
+  Filter state → append new parameters → set the filter
+      ↓
+  Update the browser's URL
+  ```
+  * Let's name it `handleFilterChange`, and the input arguments are (as they must be) exactly the same as those of `onFilterChange` of the `Filter` child component. Because this is exactly the function that we pass to it.
+  * Read the parameters from the browser's current URL using `URLSearchParams` and assign it to a constant named `params`.
+  * Convert the filter name to all lowercase, and replace all spaces with `_`. Assign the result into another constant. Let's name it `filterParamName`.
+  * Delete `filterParamName` from `params`. This clears all the parameters of that filter, which means it is reset.
+  * Then, if the given `filterState` has length greater than 0, append the filter name and state to `params`.
+  * Set the state of the correct filter from the `filters` list with the `filterState`. Tip: To avoid using multiple `if-else`, use `forEach()` to help target the right filter.
+  * Build the latest URL: `base URL without params + the latest params converted to string`. Then, push it as the latest entry of the browser's history stack using `window.history.pushState`. That's the page that's shown on the browser.
+
+    ```typescript
+    window.history.pushState(null, '', `${window.location.pathname}?${params.toString()}`
+    ```

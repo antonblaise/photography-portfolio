@@ -135,7 +135,7 @@ function GalleryContent() {
         const params = new URLSearchParams(window.location.search);
 
         // 2. Reset that filter's URL parameter
-        const filterParamName = filterName.toLowerCase().replace(" ", "_");
+        const filterParamName = filterName.toLowerCase().replaceAll(" ", "_");
         params.delete(filterParamName);
 
         // 3. Assign the filter's new URL parameter based on the given state only if it's not empty
