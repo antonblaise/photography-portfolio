@@ -627,3 +627,108 @@ Return the UI TSX
   ```
 
 ## Phase 7️⃣: Clickable Gallery Photos
+
+When the user clicks on a photo, it makes sense that they are shown the full version of that photo in its own individual page, along with the photo's information, namely the title, camera, film stock and date taken, which can all be fetched from our Supabase `photos` table. Each photo's page will have its own URL based on its ID.
+
+### Create subfolder
+
+In Next.js, the photos' page URLs can be automatically generated. Each page has a URL like this:
+
+```plaintext
+https://.../gallery/<id>
+```
+
+So, the photo's `page.tsx` is clearly located in `gallery` folder, but where and how?
+
+It's simple in Next.js. We just need to create a folder under `gallery` that's named after variable (let's name it `photoId`) with square brackets, and put the `page.tsx` of the photo's page inside it, like this:
+
+```plaintext
+src/
+└── app/
+    └── gallery/
+        └── [photoId]
+            └── page.tsx
+```
+
+### Add click handler for `RowsPhotoAlbum`
+
+* On top of the page, add `useRouter` beside `useSearchParams` as the imports from `next/navigation`.
+* Right after the definition of `searchParams` constant, define another constant named `router` that stores `useRouter()`.
+* In Gallery page's `RowsPhotoAlbum`, add `onClick` property, where we'll insert an arrow function. When a photo is clicked, the photo object is passed into the property. Then, we'll get the photo's index, generate and navigate to its URL like this:
+
+  ```plaintext
+  photo object → index → photo ID → URL → navigate
+  ```
+* In `RowsPhotoAlbum`, we can directly use `{ index }` to extract the index of the clicked photo.
+
+  ```typescript
+  onClick={({ index }) => {
+      const clickedPhoto = filteredPhotos[index];
+      router.push(`/gallery/${clickedPhoto.id}`);
+  }}
+  ```
+
+### Build the photo's page
+
+Here, the flow continues from the Gallery.
+
+```plaintext
+URL → [photoId] → params → PhotoPage component → getSinglePhoto()
+```
+
+Since we're using dynamic link (dynamic route folder) for our single photo page, in Next.js, the page's component will **always** receive an input property with these keys:
+
+```typescript
+{
+    "params": "Promise { ... }",
+    "searchParams": "Promise { ... }"
+}
+```
+
+Where:
+
+* `params` is a Promise containing the value of the variable stored in `[...]` of the dynamic route folder's name. In this case, it's the value of `photoId`. which is the `${clickedPhoto.id}`.
+* `searchParams` is an object containing all the parameters read from the URL, exactly like how we read the filters from the URL in Gallery page. For example, from `https://.../gallery/12?param1=value1&param2=value2`, `searchParams` will be assigned a Promise this object:
+
+  ```typescript
+  {
+      "param1": "value1",
+      "param2": "value2"
+  }
+  ```
+
+Note that both keys' values are Promises, so we definitely need to define our component as an **async function**!
+
+First and foremost, let's define clearly the interface of the input property that we want. We do not need `searchParams` for our single-photo page here.
+
+```typescript
+interface PhotoPageProps {
+    params: Promise<{ photoId: string }>;
+}
+```
+
+That `photoId` **MUST** match the `[photoId]` folder name!
+
+Then, create the component async function as such:
+
+```typescript
+export default async function PhotoPage({ params }: PhotoPageProps) {
+    ...
+}
+```
+
+Of course, we can skip the interface and directly set the type of `{ params }` as `any`, but it's a much better pactice to properly define the type of the property, due to:
+
+* Type safety. We prevent runtime crashes by ensuring that we only access the keys that actually exist in `params`.
+* Code readability. We clearly 'document' the exact dynamic folder parameters that this page reads and uses.
+* Maintainability. If we so happen to rename `[photoId]` into something else, the compiler will flag every other files that need to be updated, rather than silently failing.
+
+Import `getSinglePhoto` on the very top of the `page.tsx` from `actions.ts` if you haven't.
+
+In this `PhotoPage` component:
+
+* Read the `params` with `await` (because it's a Promise) and store it in a constant.
+* Read `photoId` from the constant.
+* Convert `photoId` into a `Number` and pass it into `getSinglePhoto` with `await`, as it is an async function.
+* Store the output photo object into a constant.
+* [Homework] In the `return` part, attach the image and its other info. Design the page properly with Tailwind CSS. Also handle the case where the photo ID is invalid, resulting in `photo = null`.

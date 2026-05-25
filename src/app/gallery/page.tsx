@@ -37,16 +37,16 @@ function GalleryContent() {
 
     const filters = [
         {
-            name: "Film Stocks",
-            options: filmStocks,
-            state: filmStocksFilter,
-            setState: setFilmStocksFilter
-        },
-        {
             name: "Cameras",
             options: cameras,
             state: camerasFilter,
             setState: setCamerasFilter
+        },
+        {
+            name: "Film Stocks",
+            options: filmStocks,
+            state: filmStocksFilter,
+            setState: setFilmStocksFilter
         }
     ];
 
