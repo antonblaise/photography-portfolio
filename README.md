@@ -273,6 +273,28 @@ Be free to experiment and explore.
 * *https://tailwindcss.com/docs*
 * *https://nerdcave.com/tailwind-cheat-sheet*
 
+### The Browser Tab Title and Icon
+
+By default, the website's title is just the address, and since it's hosted on Vercel, the icon is just Vercel's icon.
+
+To change the icon, simply replace `src/app/favicon.ico` with a new file, but **do not** rename it.
+
+To change the website's title the easiest way, which is a static (constant, unchanges) one:
+
+* Open `src/app/layout.tsx` again.
+* On its very top, import `Metadata` from `next`.
+* Export a constant named `metadata` of type `Metadata`, with the value of the key `title` being the browser tab title.
+
+  ```typescript
+  import { Metadata } from 'next';
+
+  export const metadata: Metadata = {
+      title: '...'
+  }
+  ```
+
+You can get favicons here: https://favicon.io
+
 ## Phase 4️⃣: The Gallery - Display the Photos
 
 We'll first work on `Gallery` page to display the photos. We will not implement any filter for now.
