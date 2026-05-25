@@ -44,7 +44,7 @@ export default function ContactPage() {
 
     return (
         <main
-            className={`min-h-[80vh] md:px-200 pt-15 md:py-50 flex grid md:grid-cols-3 md:grid-rows-2 items-center justify-center ${fadeInAnimation(hasMounted)}`}
+            className={`min-h-[80vh] md:px-200 pt-15 md:py-50 flex grid md:grid-cols-3 md:grid-rows-2 items-center justify-center duration-1000 ${fadeInAnimation(hasMounted)}`}
         >
             {hasMounted && contactLinks.map((link, index) => (
                 <Link
