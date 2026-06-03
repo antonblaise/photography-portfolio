@@ -78,10 +78,10 @@ Create data tables on Supabase:
   * image_url
   * camera_id
   * film_stock_id
-  * is_digital
   * date
   * width
   * height
+  * cloudinary_public_id
 
 Add rows in the `camera` and `film_stocks` tables, and then the `photos` table, which relates to the previous two, to populate the database. Use photo URLs from Cloudinary.
 
@@ -149,10 +149,10 @@ First, import the `supabase` client that we created.
           name: string;
       } | null;       // Null for when data fails to load
       film_stocks_id: number;
-      is_digital: boolean;
       date: string;
       width: number;
       height: number;
+      cloudinary_public_id: string | null;
   }
   ```
 * Then, create and export an asynchronous function to get photos using Supabase client into an array.
@@ -171,7 +171,6 @@ First, import the `supabase` client that we created.
               camera_id,
               film_stocks ( name ),
               film_stock_id,
-              is_digital,
               date,
               width,
               height

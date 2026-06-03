@@ -14,10 +14,10 @@ interface Photo {
         name: string;
     } | null;       // Null for when data fails to load
     film_stock_id: number;
-    is_digital: boolean;
     date: string;
     width: number;
     height: number;
+    cloudinary_public_id: string | null;
 }
 
 interface FilmStock {
@@ -45,7 +45,6 @@ export async function getPhotos(): Promise<Photo[]> {
             camera_id,
             film_stocks ( name ),
             film_stock_id,
-            is_digital,
             date,
             width,
             height
